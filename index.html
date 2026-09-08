@@ -36,10 +36,17 @@ body{
   font-family:'Jost',sans-serif;font-weight:500;font-size:17px;
   color:var(--ink);background:var(--bg);line-height:1.65;overflow-x:hidden;
 }
-body::before{
-  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:url('./fondo-acuarela.jpg') center top/cover no-repeat;
-  opacity:.62;
+/* ── FONDOS QUE SE ENCADENAN AL HACER SCROLL ── */
+#bgstack{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+#bgstack .bgl{
+  position:absolute;inset:0;background-position:center center;background-size:cover;
+  background-repeat:no-repeat;opacity:0;will-change:opacity;
+}
+#bgstack .bgl:first-child{opacity:.62;}
+/* velo que mantiene legible el texto sobre cualquiera de los 4 fondos */
+#bgstack::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(245,249,252,.30),rgba(245,249,252,.20) 45%,rgba(245,249,252,.34));
 }
 
 .wrap{max-width:440px;margin:0 auto;background:transparent;position:relative;overflow:clip;z-index:1;}
@@ -493,7 +500,15 @@ footer .fd{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:
   <div class="ld-tag" id="ldTag">Mis XV Años · 21 Noviembre 2026</div>
 </div>
 
-<!-- PÉTALOS -->
+<!-- FONDOS ENCADENADOS -->
+<div id="bgstack" aria-hidden="true">
+  <div class="bgl" style="background-image:url('./fondo-1.jpg')"></div>
+  <div class="bgl" style="background-image:url('./fondo-2.jpg')"></div>
+  <div class="bgl" style="background-image:url('./fondo-3.jpg')"></div>
+  <div class="bgl" style="background-image:url('./fondo-4.jpg')"></div>
+</div>
+
+<!-- MARIPOSAS -->
 <div id="petals"></div>
 
 <div class="wrap" style="visibility:hidden">
@@ -996,6 +1011,7 @@ function launchPage(){
   initScrollReveal();
   initTimeline();
   initItinTrack();
+  initBgScroll();
   initEnvRain();
   initCrossfade();
 }
@@ -1082,6 +1098,35 @@ function initCrossfade(){
       gsap.set('#cfImg3',{opacity:i3});
     }
   });
+}
+
+/* ── FONDOS: se encadenan suavemente conforme se baja ── */
+function initBgScroll(){
+  var layers=[].slice.call(document.querySelectorAll('#bgstack .bgl'));
+  if(layers.length<2) return;
+  var MAX=0.62, last=-1;
+  function paint(p){
+    p=p<0?0:(p>1?1:p);
+    var seg=p*(layers.length-1), i=Math.floor(seg), f=seg-i;
+    if(i>=layers.length-1){ i=layers.length-2; f=1; }
+    for(var k=0;k<layers.length;k++){
+      var o=0;
+      if(k<i) o=0;            // ya pasó: la de abajo tapa
+      else if(k===i) o=MAX;   // capa base visible
+      else if(k===i+1) o=MAX*f; // la siguiente entra encima
+      layers[k].style.opacity=o.toFixed(3);
+    }
+  }
+  function onScroll(){
+    var h=document.documentElement.scrollHeight-window.innerHeight;
+    var p=h>0?(window.scrollY/h):0;
+    if(Math.abs(p-last)<0.0015) return;
+    last=p; paint(p);
+  }
+  paint(0);
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',onScroll);
+  onScroll();
 }
 
 /* ── PISTA LUMINOSA DEL ITINERARIO: se llena conforme se baja ── */
