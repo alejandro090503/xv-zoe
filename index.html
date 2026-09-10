@@ -522,6 +522,184 @@ footer .fd{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:
 .rsvp-editar:hover{background:var(--accent);color:#fff;}
 .rsvp-editar:disabled{opacity:.5;cursor:not-allowed;}
 
+
+/* ══════════════ REDISEÑO: MÁS VIVA E INTERACTIVA ══════════════ */
+
+/* — foco visible en todo lo interactivo (accesibilidad) — */
+a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visible{
+  outline:3px solid var(--accent);outline-offset:3px;border-radius:8px;}
+button,a,.tl-item,.dc-crown,.cf-img{-webkit-tap-highlight-color:transparent;}
+.btn,.rsvp-btn,.rsvp-editar,.lang-b,.env-interactive{transition:transform .2s cubic-bezier(.2,.7,.3,1),box-shadow .25s,background .3s;}
+.btn:active,.rsvp-btn:active,.rsvp-editar:active,.lang-b:active{transform:scale(.96);}
+
+/* ── NAVEGACIÓN DE PUNTOS ── */
+#dotnav{position:fixed;right:12px;top:50%;transform:translateY(-50%);z-index:996;
+  display:none;flex-direction:column;gap:11px;padding:12px 8px;border-radius:26px;
+  background:rgba(255,255,255,.62);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);
+  border:1px solid rgba(159,205,255,.6);box-shadow:0 8px 26px rgba(47,115,176,.18);}
+#dotnav.on{display:flex;}
+.dot{position:relative;width:34px;height:34px;display:flex;align-items:center;justify-content:center;
+  border:none;background:none;cursor:pointer;padding:0;}
+.dot i{display:block;width:8px;height:8px;border-radius:50%;background:rgba(47,115,176,.34);
+  transition:transform .28s cubic-bezier(.2,.7,.3,1),background .28s,box-shadow .28s;}
+.dot:hover i{background:var(--accent);transform:scale(1.3);}
+.dot.is-on i{background:linear-gradient(140deg,#C9A04E,#E8D5A3);transform:scale(1.55);
+  box-shadow:0 0 0 4px rgba(201,160,78,.22),0 0 10px rgba(201,160,78,.6);}
+.dot span{position:absolute;right:calc(100% + 8px);white-space:nowrap;
+  font-family:'Cinzel',serif;font-size:11.5px;font-weight:600;letter-spacing:1.6px;text-transform:uppercase;
+  color:var(--dark);background:rgba(255,255,255,.95);padding:6px 11px;border-radius:20px;
+  border:1px solid rgba(159,205,255,.6);box-shadow:0 4px 14px rgba(47,115,176,.18);
+  opacity:0;pointer-events:none;transform:translateX(6px);transition:opacity .25s,transform .25s;}
+.dot:hover span,.dot:focus-visible span{opacity:1;transform:translateX(0);}
+
+/* ── CTA STICKY ── */
+#cta-sticky{position:fixed;left:50%;bottom:16px;transform:translate(-50%,140%);z-index:997;
+  display:flex;align-items:center;gap:9px;padding:14px 24px;border-radius:40px;border:none;cursor:pointer;
+  font-family:'Cinzel',serif;font-size:13px;font-weight:600;letter-spacing:2.2px;text-transform:uppercase;
+  color:#fff;background:linear-gradient(135deg,#2F73B0,#4E93CE 55%,#2F73B0);
+  box-shadow:0 10px 30px rgba(47,115,176,.45),inset 0 1px 0 rgba(255,255,255,.4);
+  transition:transform .45s cubic-bezier(.2,.7,.3,1),opacity .35s;opacity:0;max-width:calc(100vw - 96px);}
+#cta-sticky.on{transform:translate(-50%,0);opacity:1;}
+#cta-sticky svg{width:17px;height:17px;flex:none;}
+#cta-sticky:active{transform:translate(-50%,0) scale(.96);}
+
+/* ── INDICADOR DE SCROLL DEL HERO ── */
+.scroll-cue{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);z-index:4;
+  display:flex;flex-direction:column;align-items:center;gap:7px;opacity:0;}
+.scroll-cue span{font-family:'Cinzel',serif;font-size:10.5px;font-weight:600;letter-spacing:3.4px;
+  text-transform:uppercase;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.6);}
+.scroll-cue i{display:block;width:22px;height:34px;border-radius:12px;border:1.6px solid rgba(255,255,255,.85);position:relative;}
+.scroll-cue i::after{content:'';position:absolute;left:50%;top:7px;width:3px;height:7px;border-radius:2px;
+  background:#fff;transform:translateX(-50%);animation:cueDrop 1.9s ease-in-out infinite;}
+@keyframes cueDrop{0%,100%{transform:translate(-50%,0);opacity:1}55%{transform:translate(-50%,11px);opacity:.25}}
+
+/* ── TABS DE UBICACIÓN ── */
+.loc-tabs{display:flex;gap:8px;max-width:392px;margin:0 auto 20px;padding:5px;border-radius:40px;
+  background:rgba(255,255,255,.82);border:1px solid rgba(159,205,255,.6);
+  box-shadow:0 6px 20px rgba(47,115,176,.13);}
+.loc-tab{flex:1;min-height:46px;padding:12px 10px;border:none;border-radius:34px;cursor:pointer;background:none;
+  font-family:'Cinzel',serif;font-size:12.5px;font-weight:600;letter-spacing:1.6px;text-transform:uppercase;
+  color:var(--ink);transition:color .28s,background .28s,box-shadow .28s;}
+.loc-tab.is-on{color:#fff;background:linear-gradient(135deg,#2F73B0,#4E93CE);
+  box-shadow:0 6px 16px rgba(47,115,176,.34);}
+.loc-pane{display:none;animation:paneIn .45s cubic-bezier(.2,.7,.3,1);}
+.loc-pane.is-on{display:block;}
+@keyframes paneIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ── ITINERARIO: ACORDEÓN ── */
+.tl-item{cursor:pointer;border-radius:14px;transition:background .3s;}
+.tl-item:hover{background:rgba(255,255,255,.5);}
+.tl-hint{display:inline-flex;align-items:center;gap:5px;margin-top:5px;
+  font-family:'Jost',sans-serif;font-size:11.5px;font-weight:600;letter-spacing:.9px;text-transform:uppercase;
+  color:var(--accent);opacity:.9;}
+.tl-hint svg{width:13px;height:13px;flex:none;transition:transform .35s cubic-bezier(.2,.7,.3,1);}
+.tl-item.is-open .tl-hint svg{transform:rotate(180deg);}
+.tl-body{overflow:hidden;max-height:0;opacity:0;
+  transition:max-height .45s cubic-bezier(.2,.7,.3,1),opacity .3s,margin .35s;}
+.tl-item.is-open .tl-body{max-height:190px;opacity:1;margin-top:7px;}
+.tl-desc{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:16px;color:var(--ink);
+  line-height:1.5;padding-right:6px;}
+.tl-item.is-open .tl-icon{transform:scale(1.1);}
+.tl-icon{transition:transform .45s cubic-bezier(.2,.7,.3,1);}
+
+/* ── DRESS CODE: coronitas con nombre ── */
+.dc-crown-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;}
+button.dc-crown-btn{border:none;background:none;padding:6px;cursor:pointer;border-radius:14px;
+  transition:transform .28s cubic-bezier(.2,.7,.3,1);}
+button.dc-crown-btn:hover,button.dc-crown-btn.is-on{transform:translateY(-4px) scale(1.08);}
+.dc-crown-name{font-family:'Cinzel',serif;font-size:11px;font-weight:600;letter-spacing:1.3px;
+  text-transform:uppercase;color:var(--accent);opacity:0;transition:opacity .3s;}
+button.dc-crown-btn.is-on + .dc-crown-name,.dc-crown-wrap:hover .dc-crown-name{opacity:1;}
+
+/* ── GALERÍA: lightbox ── */
+.cf-frame{cursor:zoom-in;}
+.cf-tap{position:absolute;left:50%;bottom:12%;transform:translateX(-50%);z-index:4;
+  display:inline-flex;align-items:center;gap:7px;padding:11px 20px;border-radius:30px;
+  background:rgba(255,255,255,.9);border:1px solid rgba(159,205,255,.7);
+  font-family:'Cinzel',serif;font-size:11.5px;font-weight:600;letter-spacing:1.8px;text-transform:uppercase;
+  color:var(--accent);box-shadow:0 6px 20px rgba(47,115,176,.24);pointer-events:none;}
+.cf-tap svg{width:15px;height:15px;}
+#lightbox{position:fixed;inset:0;z-index:10001;display:none;align-items:center;justify-content:center;
+  background:rgba(10,26,46,.94);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);padding:16px;}
+#lightbox.on{display:flex;animation:lbIn .3s ease;}
+@keyframes lbIn{from{opacity:0}to{opacity:1}}
+#lightbox img{max-width:100%;max-height:78vh;border-radius:14px;display:block;
+  box-shadow:0 24px 60px rgba(0,0,0,.6);}
+.lb-btn{position:absolute;width:52px;height:52px;border-radius:50%;border:1px solid rgba(255,255,255,.4);
+  background:rgba(255,255,255,.14);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background .25s,transform .2s;}
+.lb-btn:hover{background:rgba(255,255,255,.3);}
+.lb-btn:active{transform:scale(.92);}
+.lb-btn svg{width:22px;height:22px;}
+.lb-prev{left:14px;top:50%;transform:translateY(-50%);}
+.lb-next{right:14px;top:50%;transform:translateY(-50%);}
+.lb-close{top:16px;right:16px;}
+.lb-dots{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);display:flex;gap:9px;}
+.lb-dots i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.38);transition:background .25s,transform .25s;}
+.lb-dots i.on{background:#E8D5A3;transform:scale(1.35);}
+
+/* ── COUNTDOWN: los números laten al cambiar ── */
+.cd-num{transition:transform .3s cubic-bezier(.2,.7,.3,1),text-shadow .3s;display:inline-block;}
+.cd-num.tick{animation:cdTick .42s cubic-bezier(.2,.7,.3,1);}
+@keyframes cdTick{0%{transform:translateY(0)}40%{transform:translateY(-7px) scale(1.06)}100%{transform:translateY(0)}}
+
+/* ── CONFETI DEL RSVP ── */
+#confetti{position:fixed;inset:0;z-index:999;pointer-events:none;overflow:hidden;display:none;}
+#confetti.on{display:block;}
+.cfti{position:absolute;top:-16px;border-radius:2px;will-change:transform,opacity;}
+
+/* ══════════════ RESPONSIVE ══════════════ */
+/* teléfono pequeño */
+@media (max-width:380px){
+  section{padding:52px 20px;}
+  .sec-title{font-size:46px;}
+  .hero-name{font-size:74px;}
+  .cd-seg{min-width:58px;}
+  .dc-cards{gap:9px;}
+  .dc-card img{height:150px;}
+  #cta-sticky{font-size:11.5px;padding:13px 18px;letter-spacing:1.4px;}
+}
+/* tablet: la invitación se vuelve una pieza de papelería sobre el fondo */
+@media (min-width:768px){
+  .wrap{max-width:520px;margin:26px auto;border-radius:24px;overflow:hidden;
+    box-shadow:0 34px 90px rgba(14,36,64,.22),0 4px 18px rgba(47,115,176,.16);
+    border:1px solid rgba(255,255,255,.75);}
+  #bgstack .bgl{background-size:cover;}
+  .hero{min-height:86vh;}
+  section{padding:74px 40px;}
+  .dc-card img{height:214px;}
+}
+/* desktop: más aire, tipografía mayor y decoración lateral */
+@media (min-width:1024px){
+  .wrap{max-width:560px;margin:38px auto;}
+  body{font-size:17.5px;}
+  .sec-title{font-size:60px;}
+  .intro-text{font-size:20.5px;}
+  .loc-card p{font-size:17.5px;}
+  #dotnav{right:24px;}
+  /* castillo grande a los lados, fuera de la columna */
+  body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:url('./castillo.png') left 3% bottom -6%/auto 62% no-repeat,
+               url('./castillo.png') right 3% bottom -6%/auto 62% no-repeat;
+    opacity:.3;filter:blur(.4px);}
+}
+@media (min-width:1440px){
+  .wrap{max-width:600px;}
+  body::after{background-size:auto 72%;opacity:.34;}
+}
+/* landscape de móvil: el hero no debe comerse la pantalla */
+@media (max-height:520px) and (orientation:landscape){
+  .hero{min-height:auto;padding:70px 0 40px;}
+  .cd-hero{min-height:auto;padding:60px 24px;}
+  #dotnav{display:none !important;}
+}
+/* menos movimiento */
+@media (prefers-reduced-motion:reduce){
+  .scroll-cue i::after,.cd-num.tick{animation:none !important;}
+  .loc-pane{animation:none !important;}
+  *{scroll-behavior:auto !important;}
+}
+
 .rv{will-change:transform,opacity;}
 </style>
 </head>
@@ -579,6 +757,10 @@ footer .fd{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:
         <span class="xv-anos" data-en="Years">Años</span>
       </div>
     </div>
+    <div class="scroll-cue" id="scrollCue" aria-hidden="true">
+      <span data-en="Scroll">Desliza</span>
+      <i></i>
+    </div>
   </section>
 
   <!-- FECHA -->
@@ -591,7 +773,7 @@ footer .fd{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:
   </div>
 
   <!-- FRASE INICIAL -->
-  <section style="padding-top:40px;">
+  <section id="sfrase" style="padding-top:40px;">
     <div class="intro-card tex-card rv">
       <span class="snow-corners" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
       <div class="intro-tiara"><img src="./corona.png" alt=""></div>
@@ -613,7 +795,7 @@ footer .fd{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:
   </div>
 
   <!-- MIS PAPÁS -->
-  <section class="rv">
+  <section id="sfam" class="rv">
     <h2 class="sec-title" data-en="My Parents">Mis Padres</h2>
     <div class="heart-div">
       <span class="hd-bar"></span>
@@ -653,7 +835,7 @@ footer .fd{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:
   </section>
 
   <!-- COUNTDOWN -->
-  <section class="cd-hero rv" style="padding:0;">
+  <section id="scd" class="cd-hero rv" style="padding:0;">
     <div class="cd-hero-bg"></div>
     <div class="cd-hero-veil"></div>
     <span class="cd-label" data-en="Just a few more!">¡Tan sólo faltan!</span>
@@ -674,6 +856,15 @@ footer .fd{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:
     <h2 class="sec-title rv" data-en="When &amp; Where">Cuándo &amp; Dónde</h2>
     <p class="loc-intro rv" data-en="I would love for you to join me!">¡Me encantaría que me acompañaras!</p>
     <div class="loc-pin rv"><img src="./ic-pin.svg" alt=""></div>
+
+    <div class="loc-tabs rv" role="tablist">
+      <button class="loc-tab is-on" id="tabMisa" type="button" role="tab" aria-selected="true"
+              aria-controls="paneMisa" data-pane="paneMisa" data-en="Mass">Misa</button>
+      <button class="loc-tab" id="tabRecep" type="button" role="tab" aria-selected="false"
+              aria-controls="paneRecep" data-pane="paneRecep" data-en="Reception">Recepción</button>
+    </div>
+
+    <div class="loc-pane is-on" id="paneMisa" role="tabpanel" aria-labelledby="tabMisa">
     <div class="loc-card rv">
       <div class="loc-photo"><img src="./foto-iglesia.jpg" alt="Christ Our King and Savior" loading="lazy"></div>
       <div class="lt" data-en="Mass">Misa</div>
@@ -688,7 +879,9 @@ footer .fd{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:
       </div>
       <a class="btn" href="https://maps.app.goo.gl/bnBDjL2BPpchJLtD9" target="_blank" rel="noopener" data-en="Get Directions">Cómo Llegar</a>
     </div>
+    </div>
 
+    <div class="loc-pane" id="paneRecep" role="tabpanel" aria-labelledby="tabRecep">
     <div class="loc-card rv">
       <div class="loc-photo"><img src="./foto-salon.jpg" alt="The Ivy on the Plains" loading="lazy"></div>
       <div class="lt" data-en="Reception">Recepción</div>
@@ -702,6 +895,7 @@ footer .fd{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:
         <iframe src="https://www.google.com/maps?q=The+Ivy+on+the+Plains,+1831+Jernigan+Bridge+Rd,+White+Plains,+GA+30678&amp;hl=es&amp;z=15&amp;output=embed" width="100%" height="210" style="border:0;display:block;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mapa del salón"></iframe>
       </div>
       <a class="btn" href="https://www.google.com/maps/search/?api=1&amp;query=The+Ivy+on+the+Plains%2C+1831+Jernigan+Bridge+Rd%2C+White+Plains%2C+GA+30678" target="_blank" rel="noopener" data-en="Get Directions">Cómo Llegar</a>
+    </div>
     </div>
   </section>
 
@@ -733,37 +927,37 @@ footer .fd{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:
           <span class="tl-track-glow"></span><span class="tl-track-mid"></span>
           <span class="tl-track-fill"></span><span class="tl-track-pearl"></span>
         </div>
-        <div class="tl-item rv">
+        <div class="tl-item rv" tabindex="0" role="button">
           <div class="tl-icon"><span class="tl-ic" style="--ic:url('./ic-iglesia.svg')" role="img" aria-label="Misa"></span></div>
           <div class="tl-dot"></div>
-          <div class="tl-text"><div class="tl-time">12:30 pm</div><div class="tl-ev" data-en="Mass">Misa</div></div>
+          <div class="tl-text"><div class="tl-time">12:30 pm</div><div class="tl-ev" data-en="Mass">Misa</div><div class="tl-hint"><span data-en="Tap">Toca</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></div><div class="tl-body"><div class="tl-desc" data-en="At Christ Our King and Savior · 6341 Lake Oconee Pkwy, Greensboro">En Christ Our King and Savior · 6341 Lake Oconee Pkwy, Greensboro</div></div></div>
         </div>
-        <div class="tl-item rv">
+        <div class="tl-item rv" tabindex="0" role="button">
           <div class="tl-icon"><span class="tl-ic" style="--ic:url('./ic-recepcion.svg')" role="img" aria-label="Recepción"></span></div>
           <div class="tl-dot"></div>
-          <div class="tl-text"><div class="tl-time">3:00 pm</div><div class="tl-ev" data-en="Reception">Recepción</div></div>
+          <div class="tl-text"><div class="tl-time">3:00 pm</div><div class="tl-ev" data-en="Reception">Recepción</div><div class="tl-hint"><span data-en="Tap">Toca</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></div><div class="tl-body"><div class="tl-desc" data-en="At The Ivy on the Plains · 1831 Jernigan Bridge Rd, White Plains">En The Ivy on the Plains · 1831 Jernigan Bridge Rd, White Plains</div></div></div>
         </div>
-        <div class="tl-item rv">
+        <div class="tl-item rv" tabindex="0" role="button">
           <div class="tl-icon"><span class="tl-ic" style="--ic:url('./ic-cena.svg')" role="img" aria-label="Comida"></span></div>
           <div class="tl-dot"></div>
-          <div class="tl-text"><div class="tl-time">3:30 pm</div><div class="tl-ev" data-en="Dinner">Comida</div></div>
+          <div class="tl-text"><div class="tl-time">3:30 pm</div><div class="tl-ev" data-en="Dinner">Comida</div><div class="tl-hint"><span data-en="Tap">Toca</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></div><div class="tl-body"><div class="tl-desc" data-en="At the venue, right after the reception">En el salón, enseguida de la recepción</div></div></div>
         </div>
-        <div class="tl-item rv">
+        <div class="tl-item rv" tabindex="0" role="button">
           <div class="tl-icon"><span class="tl-ic" style="--ic:url('./ic-vals.svg')" role="img" aria-label="Vals"></span></div>
           <div class="tl-dot"></div>
-          <div class="tl-text"><div class="tl-time">7:30 pm</div><div class="tl-ev" data-en="Waltz">Vals</div></div>
+          <div class="tl-text"><div class="tl-time">7:30 pm</div><div class="tl-ev" data-en="Waltz">Vals</div><div class="tl-hint"><span data-en="Tap">Toca</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></div><div class="tl-body"><div class="tl-desc" data-en="Zoe's waltz with her dad and her chambelán of honor">El vals de Zoe con su papá y su chambelán de honor</div></div></div>
         </div>
-        <div class="tl-item tl-fin rv">
+        <div class="tl-item tl-fin rv" tabindex="0" role="button">
           <div class="tl-icon"><span class="tl-ic" style="--ic:url('./ic-fin.svg')" role="img" aria-label="Fin del evento"></span></div>
           <div class="tl-dot"></div>
-          <div class="tl-text"><div class="tl-time">2:00 am</div><div class="tl-ev" data-en="End of the event">Fin del evento</div><div class="tl-gracias" data-en="Thank you!">¡Gracias!</div></div>
+          <div class="tl-text"><div class="tl-time">2:00 am</div><div class="tl-ev" data-en="End of the event">Fin del evento</div><div class="tl-hint"><span data-en="Tap">Toca</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></div><div class="tl-body"><div class="tl-desc" data-en="The celebration ends at 2:00 am">Cierre de la celebración a las 2:00 am</div></div><div class="tl-gracias" data-en="Thank you!">¡Gracias!</div></div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- DRESS CODE -->
-  <section class="rv">
+  <section id="sdc" class="rv">
     <div class="eyebrow" data-en="Dress Code">Etiqueta</div>
     <h2 class="sec-title" data-en="Dress Code">Código de Vestimenta</h2>
     <div class="dc-note" data-en="Formal">Formal</div>
@@ -785,8 +979,18 @@ footer .fd{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:
     </div>
     <p class="dc-reserve" style="margin-top:6px;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:17px;color:var(--ink);line-height:1.55;margin-bottom:14px;" data-en-html="These colors are <strong>reserved</strong> for the birthday girl">Estos colores están <strong>reservados</strong> para la quinceañera</p>
     <div class="dc-crown-row">
-      <span class="dc-crown" style="background-color:#9FCDFF;" title="Azul cielo"></span>
-      <span class="dc-crown" style="background-color:#ADADAD;" title="Plateado"></span>
+      <span class="dc-crown-wrap">
+        <button class="dc-crown-btn" type="button" aria-label="Azul cielo">
+          <span class="dc-crown" style="background-color:#9FCDFF;"></span>
+        </button>
+        <span class="dc-crown-name" data-en="Sky blue">Azul cielo</span>
+      </span>
+      <span class="dc-crown-wrap">
+        <button class="dc-crown-btn" type="button" aria-label="Plateado">
+          <span class="dc-crown" style="background-color:#ADADAD;"></span>
+        </button>
+        <span class="dc-crown-name" data-en="Silver">Plateado</span>
+      </span>
     </div>
   </section>
 
@@ -855,6 +1059,7 @@ footer .fd{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:
       <img class="cf-img" id="cfImg3" src="./foto-hero.jpg" alt="Zoe Galán">
       <div class="cf-fade-top"></div>
       <div class="cf-fade-bot"></div>
+      <span class="cf-tap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.2-3.2M11 8.4v5.2M8.4 11h5.2"/></svg><span data-en="Tap to enlarge">Toca para ampliar</span></span>
     </div>
   </section>
 
@@ -955,6 +1160,27 @@ footer .fd{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:
   </footer>
 
 </div>
+
+<!-- NAVEGACIÓN -->
+<nav id="dotnav" aria-label="Secciones"></nav>
+
+<!-- CTA STICKY -->
+<button id="cta-sticky" type="button">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+  <span data-en="Confirm attendance">Confirmar asistencia</span>
+</button>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" role="dialog" aria-modal="true" aria-label="Galería">
+  <img id="lbImg" src="" alt="">
+  <button class="lb-btn lb-close" id="lbClose" type="button" aria-label="Cerrar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  <button class="lb-btn lb-prev" id="lbPrev" type="button" aria-label="Anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+  <button class="lb-btn lb-next" id="lbNext" type="button" aria-label="Siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+  <div class="lb-dots" id="lbDots"></div>
+</div>
+
+<!-- CONFETI -->
+<div id="confetti" aria-hidden="true"></div>
 
 <!-- MÚSICA -->
 <button class="music-fab" id="musicFab" aria-label="Reproducir música">
@@ -1060,6 +1286,14 @@ function launchPage(){
   initTimeline();
   initItinTrack();
   initBgScroll();
+  initDotNav();
+  initItinAccordion();
+  initLocTabs();
+  initLightbox();
+  initCrowns();
+  initStickyCta();
+  initScrollCue();
+  initButterflyDodge();
   initEnvRain();
   initCrossfade();
 }
@@ -1148,6 +1382,191 @@ function initCrossfade(){
       gsap.set('#cfImg3',{opacity:i3});
     }
   });
+}
+
+/* ── NAVEGACIÓN DE PUNTOS ── */
+var SECS=[['#sfrase','Inicio','Start'],['#sfam','Familia','Family'],['#scd','Cuenta','Countdown'],
+          ['#subic','Lugar','Venue'],['#siti','Itinerario','Itinerary'],['#sdc','Vestimenta','Dress code'],
+          ['#sgifts','Regalos','Gifts'],['#sgal','Fotos','Photos'],['#srsvp','Confirmar','RSVP']];
+function initDotNav(){
+  var nav=document.getElementById('dotnav'); if(!nav) return;
+  var items=[];
+  SECS.forEach(function(sec){
+    var el=document.querySelector(sec[0]); if(!el) return;
+    var b=document.createElement('button');
+    b.className='dot'; b.type='button';
+    b.setAttribute('aria-label',sec[1]);
+    b.innerHTML='<span data-en="'+sec[2]+'">'+sec[1]+'</span><i></i>';
+    b.addEventListener('click',function(){ el.scrollIntoView({behavior:'smooth',block:'start'}); });
+    nav.appendChild(b); items.push({b:b,el:el});
+  });
+  nav.classList.add('on');
+  if(typeof applyLang==='function' && window.LANG==='en') applyLang('en');
+  var tick=function(){
+    var mid=window.scrollY+window.innerHeight*0.42, act=0;
+    for(var i=0;i<items.length;i++){ if(items[i].el.offsetTop<=mid) act=i; }
+    for(var j=0;j<items.length;j++) items[j].b.classList.toggle('is-on', j===act);
+  };
+  window.addEventListener('scroll',tick,{passive:true});
+  window.addEventListener('resize',tick); tick();
+}
+
+/* ── ITINERARIO: acordeón ── */
+function initItinAccordion(){
+  var rows=[].slice.call(document.querySelectorAll('.tl-item'));
+  function abrir(row){
+    rows.forEach(function(r){ if(r!==row) r.classList.remove('is-open'); });
+    row.classList.toggle('is-open');
+    if(typeof ScrollTrigger!=='undefined') setTimeout(function(){ScrollTrigger.refresh();},480);
+  }
+  rows.forEach(function(row){
+    row.addEventListener('click',function(){ abrir(row); });
+    row.addEventListener('keydown',function(e){
+      if(e.key==='Enter'||e.key===' '){ e.preventDefault(); abrir(row); }
+    });
+  });
+}
+
+/* ── UBICACIÓN: pestañas ── */
+function initLocTabs(){
+  var tabs=[].slice.call(document.querySelectorAll('.loc-tab'));
+  if(!tabs.length) return;
+  tabs.forEach(function(t){
+    t.addEventListener('click',function(){
+      tabs.forEach(function(o){
+        var on=(o===t);
+        o.classList.toggle('is-on',on);
+        o.setAttribute('aria-selected',on?'true':'false');
+        var p=document.getElementById(o.dataset.pane);
+        if(p) p.classList.toggle('is-on',on);
+      });
+      if(typeof ScrollTrigger!=='undefined') setTimeout(function(){ScrollTrigger.refresh();},420);
+    });
+  });
+}
+
+/* ── GALERÍA: lightbox ── */
+function initLightbox(){
+  var frame=document.querySelector('.cf-frame'), lb=document.getElementById('lightbox');
+  if(!frame||!lb) return;
+  var fotos=[].slice.call(document.querySelectorAll('.cf-img')).map(function(i){return i.getAttribute('src');});
+  var img=document.getElementById('lbImg'), dots=document.getElementById('lbDots'), idx=0;
+  fotos.forEach(function(){ dots.appendChild(document.createElement('i')); });
+  function pinta(){
+    img.src=fotos[idx];
+    [].slice.call(dots.children).forEach(function(d,i){ d.classList.toggle('on',i===idx); });
+  }
+  function abrir(i){ idx=i; pinta(); lb.classList.add('on'); document.body.style.overflow='hidden'; }
+  function cerrar(){ lb.classList.remove('on'); document.body.style.overflow=''; }
+  function mover(d){ idx=(idx+d+fotos.length)%fotos.length; pinta(); }
+  frame.addEventListener('click',function(){
+    // abre la foto que se está viendo en el crossfade
+    var vis=0, max=-1;
+    [].slice.call(document.querySelectorAll('.cf-img')).forEach(function(im,i){
+      var o=parseFloat(getComputedStyle(im).opacity)||0; if(o>max){max=o;vis=i;}
+    });
+    abrir(vis);
+  });
+  document.getElementById('lbClose').addEventListener('click',cerrar);
+  document.getElementById('lbPrev').addEventListener('click',function(e){e.stopPropagation();mover(-1);});
+  document.getElementById('lbNext').addEventListener('click',function(e){e.stopPropagation();mover(1);});
+  lb.addEventListener('click',function(e){ if(e.target===lb||e.target===img) cerrar(); });
+  document.addEventListener('keydown',function(e){
+    if(!lb.classList.contains('on')) return;
+    if(e.key==='Escape') cerrar();
+    if(e.key==='ArrowLeft') mover(-1);
+    if(e.key==='ArrowRight') mover(1);
+  });
+  // deslizar en el lightbox
+  var x0=null;
+  lb.addEventListener('touchstart',function(e){ x0=e.touches[0].clientX; },{passive:true});
+  lb.addEventListener('touchend',function(e){
+    if(x0===null) return;
+    var dx=e.changedTouches[0].clientX-x0;
+    if(Math.abs(dx)>44) mover(dx<0?1:-1);
+    x0=null;
+  },{passive:true});
+}
+
+/* ── DRESS CODE: coronitas ── */
+function initCrowns(){
+  var bs=[].slice.call(document.querySelectorAll('.dc-crown-btn'));
+  bs.forEach(function(b){
+    b.addEventListener('click',function(){
+      bs.forEach(function(o){ o.classList.toggle('is-on', o===b && !b.classList.contains('is-on')); });
+    });
+  });
+}
+
+/* ── CTA STICKY: aparece tras el hero, se va al llegar al RSVP ── */
+function initStickyCta(){
+  var cta=document.getElementById('cta-sticky'), rsvp=document.getElementById('srsvp');
+  if(!cta||!rsvp) return;
+  cta.addEventListener('click',function(){ rsvp.scrollIntoView({behavior:'smooth',block:'start'}); });
+  var tick=function(){
+    var y=window.scrollY, h=window.innerHeight;
+    var dentro = y > h*0.9 && (y + h*0.9) < rsvp.offsetTop;
+    cta.classList.toggle('on', dentro);
+  };
+  window.addEventListener('scroll',tick,{passive:true});
+  window.addEventListener('resize',tick); tick();
+}
+
+/* ── HERO: el indicador aparece y se va al primer scroll ── */
+function initScrollCue(){
+  var cue=document.getElementById('scrollCue'); if(!cue) return;
+  gsap.to(cue,{opacity:.95,duration:1.1,delay:1.8,ease:'power2.out'});
+  var ir=function(){
+    gsap.to(cue,{opacity:0,duration:.4,onComplete:function(){cue.style.display='none';}});
+    window.removeEventListener('scroll',ir);
+  };
+  window.addEventListener('scroll',ir,{passive:true,once:true});
+}
+
+/* ── MARIPOSAS: huyen del dedo / del cursor ── */
+function initButterflyDodge(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var capa=document.getElementById('petals'); if(!capa) return;
+  var ultimo=0;
+  function espantar(px,py){
+    var ahora=Date.now();
+    if(ahora-ultimo<90) return;
+    ultimo=ahora;
+    [].slice.call(capa.querySelectorAll('.bfly')).forEach(function(b){
+      var r=b.getBoundingClientRect();
+      var cx=r.left+r.width/2, cy=r.top+r.height/2;
+      var dx=cx-px, dy=cy-py, d=Math.hypot(dx,dy);
+      if(d<110 && d>0){
+        var f=(110-d)/110*68;
+        gsap.to(b,{x:'+='+(dx/d*f),y:'+='+(dy/d*f),rotation:'+='+((dx>0?1:-1)*22),
+          duration:.85,ease:'power2.out',overwrite:false});
+      }
+    });
+  }
+  window.addEventListener('pointermove',function(e){ espantar(e.clientX,e.clientY); },{passive:true});
+  window.addEventListener('touchmove',function(e){
+    if(e.touches[0]) espantar(e.touches[0].clientX,e.touches[0].clientY);
+  },{passive:true});
+}
+
+/* ── CONFETI ── */
+function lanzarConfeti(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var capa=document.getElementById('confetti'); if(!capa) return;
+  capa.classList.add('on'); capa.innerHTML='';
+  var col=['#9FCDFF','#C9A04E','#E8D5A3','#ADADAD','#ffffff','#2F73B0'];
+  for(var i=0;i<70;i++){
+    var d=document.createElement('div'); d.className='cfti';
+    var w=5+Math.random()*7;
+    d.style.cssText='width:'+w+'px;height:'+(w*(.4+Math.random()))+'px;background:'+col[i%col.length]+
+      ';left:'+(Math.random()*100)+'%;';
+    capa.appendChild(d);
+    gsap.fromTo(d,{y:-20,opacity:1,rotation:Math.random()*360},
+      {y:window.innerHeight+40,x:(Math.random()-.5)*220,rotation:'+='+(360+Math.random()*720),
+       duration:2.4+Math.random()*1.8,ease:'none',delay:Math.random()*.5,
+       onComplete:function(){ this.targets()[0].remove(); }});
+  }
+  setTimeout(function(){ capa.classList.remove('on'); capa.innerHTML=''; },5200);
 }
 
 /* ── FONDOS: se encadenan suavemente conforme se baja ── */
@@ -1287,12 +1706,18 @@ function initEnvRain(){
 /* ── COUNTDOWN ── */
 (function(){
   const target=new Date('2026-11-21T12:30:00-05:00').getTime();
+  function pon(id,val){
+    const el=document.getElementById(id);
+    if(!el||el.textContent===val) return;
+    el.textContent=val;
+    el.classList.remove('tick'); void el.offsetWidth; el.classList.add('tick');
+  }
   function tick(){
     const d=target-Date.now();if(d<=0)return;
-    document.getElementById('cdD').textContent=String(Math.floor(d/86400000)).padStart(3,'0');
-    document.getElementById('cdH').textContent=String(Math.floor(d%86400000/3600000)).padStart(2,'0');
-    document.getElementById('cdM').textContent=String(Math.floor(d%3600000/60000)).padStart(2,'0');
-    document.getElementById('cdS').textContent=String(Math.floor(d%60000/1000)).padStart(2,'0');
+    pon('cdD',String(Math.floor(d/86400000)).padStart(3,'0'));
+    pon('cdH',String(Math.floor(d%86400000/3600000)).padStart(2,'0'));
+    pon('cdM',String(Math.floor(d%3600000/60000)).padStart(2,'0'));
+    pon('cdS',String(Math.floor(d%60000/1000)).padStart(2,'0'));
   }
   tick();setInterval(tick,1000);
 })();
@@ -1388,6 +1813,7 @@ function initEnvRain(){
     bandejaEl.style.display = 'none';
     graciasEl.style.display = 'block';
     editarBtn.disabled = frozen;
+    if(estado === 'confirmado' && typeof lanzarConfeti === 'function') lanzarConfeti();
   }
   /* Reabre la bandeja conservando lo ya capturado. */
   function abrirBandeja(){
