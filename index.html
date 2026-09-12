@@ -1302,6 +1302,7 @@ function applyLang(l){
   });
 
   function pedirToque(){
+    clearTimeout(guard);   // esperando el toque del invitado: no saltar la intro
     envScreen.classList.add('need-tap');
     gsap.to(hint,{opacity:1,duration:.6});
   }
