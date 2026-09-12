@@ -758,6 +758,12 @@ button.dc-crown-btn.is-on + .dc-crown-name,.dc-crown-wrap:hover .dc-crown-name{o
   *{scroll-behavior:auto !important;}
 }
 
+/* texto script con degradado: background-clip:text recorta en la caja,
+   asi que los trazos (descendentes y remates de la Z/M) necesitan aire */
+.hero-name{padding:18px .18em .26em;margin-left:-.18em;margin-right:-.18em;margin-bottom:calc(6px - .26em);}
+.env-title{padding:.1em .16em .28em !important;margin-bottom:-.2em;}
+footer .fn{padding-left:.18em;padding-right:.18em;}
+
 .rv{will-change:transform,opacity;}
 </style>
 </head>
