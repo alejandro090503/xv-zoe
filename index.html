@@ -92,7 +92,7 @@ body{
 }
 .sec-title{
   font-family:'Great Vibes',cursive;font-size:54px;
-  text-align:center;line-height:1.05;margin-bottom:8px;padding-top:10px;
+  text-align:center;line-height:1.05;margin-bottom:calc(8px - .24em);padding-top:10px;padding-bottom:.24em;
   background-image:linear-gradient(100deg,
     #6B4F1C 0%,#7A5C22 10%,#8A6A28 20%,#A8822F 27%,#C9A04E 32%,#A8822F 37%,
     #9A7830 46%,#6B4F1C 58%,#8A6A28 70%,#B98F3C 80%,#7A5C22 90%,#6B4F1C 100%);
@@ -192,7 +192,7 @@ section{padding:62px 26px;position:relative;}
   background-image:linear-gradient(100deg,#6B4F1C 0%,#8A6A28 20%,#C9A04E 32%,#A8822F 40%,#6B4F1C 58%,#B98F3C 80%,#6B4F1C 100%);
   background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
   animation:goldSweep 6s linear infinite;}
-.intro-text .lead::first-letter{font-family:'Great Vibes',cursive;font-size:52px;color:var(--accent);float:left;line-height:.7;padding:8px 8px 0 0;}
+.intro-text .lead::first-letter{font-family:'Cinzel',serif;font-weight:700;font-size:40px;line-height:.9;color:#A8822F;padding-right:1px;}
 .intro-text p+p{margin-top:16px;}
 /* foto de Zoe entre los parrafos del mensaje */
 .intro-foto{position:relative;z-index:2;margin:24px -6px 22px;border-radius:14px;overflow:hidden;
@@ -474,7 +474,7 @@ section{padding:62px 26px;position:relative;}
 .closing-text{font-family:'Cormorant Garamond',serif;font-size:20px;line-height:1.8;color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.55);max-width:350px;margin-bottom:18px;font-weight:600;}
 .closing-sign{font-family:'Great Vibes',cursive;font-size:64px;color:#fff;text-shadow:0 3px 20px rgba(0,0,0,.45);line-height:1;}
 footer{padding:46px 20px 56px;text-align:center;background:var(--bg);}
-footer .fn{font-family:'Great Vibes',cursive;font-size:46px;padding-top:10px;
+footer .fn{font-family:'Great Vibes',cursive;font-size:46px;padding-top:10px;padding-bottom:.24em;margin-bottom:-.24em;
   background-image:linear-gradient(100deg,#6B4F1C 0%,#8A6A28 20%,#C9A04E 32%,#A8822F 40%,#6B4F1C 58%,#B98F3C 80%,#6B4F1C 100%);
   background-size:300% 100%;
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:goldSweep 6s linear infinite;}
@@ -553,25 +553,64 @@ button,a,.tl-item,.dc-crown,.cf-img{-webkit-tap-highlight-color:transparent;}
 .btn,.rsvp-btn,.rsvp-editar,.lang-b,.env-interactive{transition:transform .2s cubic-bezier(.2,.7,.3,1),box-shadow .25s,background .3s;}
 .btn:active,.rsvp-btn:active,.rsvp-editar:active,.lang-b:active{transform:scale(.96);}
 
-/* ── NAVEGACIÓN DE PUNTOS ── */
-#dotnav{position:fixed;right:12px;top:50%;transform:translateY(-50%);z-index:996;
-  display:none;flex-direction:column;gap:11px;padding:12px 8px;border-radius:26px;
-  background:rgba(255,255,255,.62);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);
-  border:1px solid rgba(159,205,255,.6);box-shadow:0 8px 26px rgba(47,115,176,.18);}
-#dotnav.on{display:flex;}
-.dot{position:relative;width:34px;height:34px;display:flex;align-items:center;justify-content:center;
-  border:none;background:none;cursor:pointer;padding:0;}
-.dot i{display:block;width:8px;height:8px;border-radius:50%;background:rgba(47,115,176,.34);
-  transition:transform .28s cubic-bezier(.2,.7,.3,1),background .28s,box-shadow .28s;}
-.dot:hover i{background:var(--accent);transform:scale(1.3);}
-.dot.is-on i{background:linear-gradient(140deg,#C9A04E,#E8D5A3);transform:scale(1.55);
-  box-shadow:0 0 0 4px rgba(201,160,78,.22),0 0 10px rgba(201,160,78,.6);}
-.dot span{position:absolute;right:calc(100% + 8px);white-space:nowrap;
-  font-family:'Cinzel',serif;font-size:11.5px;font-weight:600;letter-spacing:1.6px;text-transform:uppercase;
-  color:var(--dark);background:rgba(255,255,255,.95);padding:6px 11px;border-radius:20px;
-  border:1px solid rgba(159,205,255,.6);box-shadow:0 4px 14px rgba(47,115,176,.18);
-  opacity:0;pointer-events:none;transform:translateX(6px);transition:opacity .25s,transform .25s;}
-.dot:hover span,.dot:focus-visible span{opacity:1;transform:translateX(0);}
+/* ── MENÚ DE NAVEGACIÓN (formato boda-alexis-y-edgar) ── */
+.nav-btn{
+  position:fixed;top:16px;right:16px;z-index:9200;
+  width:54px;height:54px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.75);
+  background:rgba(14,36,64,.62);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  box-shadow:0 8px 26px -8px rgba(14,36,64,.6);
+  opacity:0;pointer-events:none;
+  transition:opacity .5s ease,transform .3s ease,background .3s ease;
+}
+.nav-btn.is-ready{opacity:1;pointer-events:auto}
+.nav-btn:hover{transform:scale(1.06);background:rgba(14,36,64,.82)}
+.nav-btn i{display:block;width:22px;height:1.6px;background:#EAF3FD;border-radius:2px;
+  transition:transform .35s ease,opacity .25s ease}
+.nav-btn.abierto i:nth-child(1){transform:translateY(6.6px) rotate(45deg)}
+.nav-btn.abierto i:nth-child(2){opacity:0}
+.nav-btn.abierto i:nth-child(3){transform:translateY(-6.6px) rotate(-45deg)}
+#nav-panel{
+  position:fixed;inset:0;z-index:9150;
+  background:linear-gradient(160deg,rgba(12,30,54,.975) 0%,rgba(24,58,96,.975) 100%);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .42s ease;
+}
+#nav-panel.abierto{opacity:1;pointer-events:auto}
+.nav-inner{width:100%;max-width:460px;padding:24px;max-height:92vh;overflow-y:auto;text-align:center}
+.nav-mono{
+  display:block;width:min(120px,30vw);height:auto;margin:0 auto 18px;
+  opacity:0;transform:translateY(-10px);
+  transition:opacity .5s .1s ease,transform .5s .1s ease;
+  filter:drop-shadow(0 0 14px rgba(159,205,255,.55));
+}
+#nav-panel.abierto .nav-mono{opacity:.95;transform:none}
+.nav-lista{list-style:none;margin:0;padding:0}
+.nav-lista li{margin:0;opacity:0;transform:translateY(14px);
+  transition:opacity .42s ease,transform .42s cubic-bezier(.2,.8,.2,1)}
+#nav-panel.abierto .nav-lista li{opacity:1;transform:none}
+.nav-lista a{
+  position:relative;display:block;padding:14px 10px;text-decoration:none;
+  font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(21px,4.6vw,27px);font-weight:600;
+  color:#EDF4FC;line-height:1.25;transition:color .3s ease,letter-spacing .3s ease;
+}
+.nav-lista a::after{
+  content:'';position:absolute;left:50%;bottom:6px;transform:translateX(-50%) scaleX(0);
+  width:46px;height:1px;background:#E8D5A3;transition:transform .35s ease;transform-origin:center;
+}
+.nav-lista a:hover,.nav-lista a:focus-visible{color:#F3E3B8;letter-spacing:.03em}
+.nav-lista a:hover::after,.nav-lista a:focus-visible::after{transform:translateX(-50%) scaleX(1)}
+.nav-lista li + li{border-top:1px solid rgba(159,205,255,.18)}
+.nav-lista a.is-active{color:#9FCDFF}
+.nav-lista a.is-active::after{transform:translateX(-50%) scaleX(1);opacity:.7}
+.nav-rsvp{color:#F3E3B8 !important;font-weight:700 !important}
+.nav-rsvp::after{transform:translateX(-50%) scaleX(1) !important;width:58px;opacity:.85}
+@media (prefers-reduced-motion:reduce){
+  .nav-btn,#nav-panel,.nav-lista li,.nav-mono{transition:none}
+}
 
 /* ── CTA STICKY ── */
 #cta-sticky{position:fixed;left:50%;bottom:16px;transform:translate(-50%,140%);z-index:997;
@@ -697,7 +736,6 @@ button.dc-crown-btn.is-on + .dc-crown-name,.dc-crown-wrap:hover .dc-crown-name{o
   .sec-title{font-size:60px;}
   .intro-text{font-size:20.5px;}
   .loc-card p{font-size:17.5px;}
-  #dotnav{right:24px;}
   /* castillo grande a los lados, fuera de la columna */
   body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
     background:url('./castillo.png') left 3% bottom -6%/auto 62% no-repeat,
@@ -712,7 +750,6 @@ button.dc-crown-btn.is-on + .dc-crown-name,.dc-crown-wrap:hover .dc-crown-name{o
 @media (max-height:520px) and (orientation:landscape){
   .hero{min-height:auto;padding:70px 0 40px;}
   .cd-hero{min-height:auto;padding:60px 24px;}
-  #dotnav{display:none !important;}
 }
 /* menos movimiento */
 @media (prefers-reduced-motion:reduce){
@@ -1092,7 +1129,7 @@ button.dc-crown-btn.is-on + .dc-crown-name,.dc-crown-wrap:hover .dc-crown-name{o
   </section>
 
   <!-- ÁLBUM COMPARTIDO -->
-  <section class="album">
+  <section id="salbum" class="album">
     <div class="album-bg"></div>
     <div class="album-veil"></div>
     <div class="album-inner">
@@ -1189,8 +1226,28 @@ button.dc-crown-btn.is-on + .dc-crown-name,.dc-crown-wrap:hover .dc-crown-name{o
 
 </div>
 
-<!-- NAVEGACIÓN -->
-<nav id="dotnav" aria-label="Secciones"></nav>
+
+<!-- MENÚ -->
+<button class="nav-btn" id="navBtn" type="button" aria-label="Abrir el menú" aria-expanded="false" aria-controls="nav-panel">
+  <i aria-hidden="true"></i><i aria-hidden="true"></i><i aria-hidden="true"></i>
+</button>
+<nav id="nav-panel" aria-label="Secciones de la invitación">
+  <div class="nav-inner">
+    <img class="nav-mono" src="./corona.png" alt="" aria-hidden="true">
+    <ul class="nav-lista">
+      <li><a href="#sfrase" data-en="My message">Mi mensaje</a></li>
+      <li><a href="#sfam" data-en="My family">Mi familia</a></li>
+      <li><a href="#scd" data-en="Countdown">Cuenta regresiva</a></li>
+      <li><a href="#subic" data-en="Mass &amp; reception">Misa y recepción</a></li>
+      <li><a href="#siti" data-en="Itinerary">Itinerario</a></li>
+      <li><a href="#sdc" data-en="Dress code">Código de vestimenta</a></li>
+      <li><a href="#sgifts" data-en="Envelope shower">Lluvia de sobres</a></li>
+      <li><a href="#sgal" data-en="Moments">Momentos</a></li>
+      <li><a href="#salbum" data-en="Share your photos">Comparte tus fotos</a></li>
+      <li><a href="#srsvp" class="nav-rsvp" data-en="Confirm attendance">Confirmar asistencia</a></li>
+    </ul>
+  </div>
+</nav>
 
 <!-- CTA STICKY -->
 <button id="cta-sticky" type="button">
@@ -1343,7 +1400,7 @@ function launchPage(){
   initTimeline();
   initItinTrack();
   initBgScroll();
-  initDotNav();
+  initMenu();
   initItinAccordion();
   initLocTabs();
   initLightbox();
@@ -1441,31 +1498,51 @@ function initCrossfade(){
   });
 }
 
-/* ── NAVEGACIÓN DE PUNTOS ── */
-var SECS=[['#sfrase','Inicio','Start'],['#sfam','Familia','Family'],['#scd','Cuenta','Countdown'],
-          ['#subic','Lugar','Venue'],['#siti','Itinerario','Itinerary'],['#sdc','Vestimenta','Dress code'],
-          ['#sgifts','Regalos','Gifts'],['#sgal','Fotos','Photos'],['#srsvp','Confirmar','RSVP']];
-function initDotNav(){
-  var nav=document.getElementById('dotnav'); if(!nav) return;
-  var items=[];
-  SECS.forEach(function(sec){
-    var el=document.querySelector(sec[0]); if(!el) return;
-    var b=document.createElement('button');
-    b.className='dot'; b.type='button';
-    b.setAttribute('aria-label',sec[1]);
-    b.innerHTML='<span data-en="'+sec[2]+'">'+sec[1]+'</span><i></i>';
-    b.addEventListener('click',function(){ el.scrollIntoView({behavior:'smooth',block:'start'}); });
-    nav.appendChild(b); items.push({b:b,el:el});
+/* ── MENÚ ── */
+function initMenu(){
+  var btn = document.getElementById('navBtn');
+  var panel = document.getElementById('nav-panel');
+  if(!btn || !panel) return;
+  var enlaces = panel.querySelectorAll('a[href^="#"]');
+
+  function abrir(v){
+    panel.classList.toggle('abierto', v);
+    btn.classList.toggle('abierto', v);
+    btn.setAttribute('aria-expanded', v ? 'true' : 'false');
+    btn.setAttribute('aria-label', v ? 'Cerrar el menú' : 'Abrir el menú');
+    document.body.style.overflow = v ? 'hidden' : '';
+    panel.querySelectorAll('.nav-lista li').forEach(function(li,k){
+      li.style.transitionDelay = v ? (0.06 + k*0.032) + 's' : '0s';
+    });
+  }
+  btn.addEventListener('click', function(){ abrir(!panel.classList.contains('abierto')); });
+  enlaces.forEach(function(a){
+    a.addEventListener('click', function(e){
+      var dest = document.querySelector(a.getAttribute('href'));
+      abrir(false);
+      if(dest){
+        e.preventDefault();
+        setTimeout(function(){
+          window.scrollTo({top: dest.getBoundingClientRect().top + window.scrollY - 6, behavior:'smooth'});
+        }, 280);
+      }
+    });
   });
-  nav.classList.add('on');
-  if(typeof applyLang==='function' && window.LANG==='en') applyLang('en');
-  var tick=function(){
-    var mid=window.scrollY+window.innerHeight*0.42, act=0;
-    for(var i=0;i<items.length;i++){ if(items[i].el.offsetTop<=mid) act=i; }
-    for(var j=0;j<items.length;j++) items[j].b.classList.toggle('is-on', j===act);
-  };
-  window.addEventListener('scroll',tick,{passive:true});
-  window.addEventListener('resize',tick); tick();
+  panel.addEventListener('click', function(e){ if(e.target === panel) abrir(false); });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && panel.classList.contains('abierto')) abrir(false);
+  });
+  // marca la seccion en la que va el invitado (scroll, no IntersectionObserver)
+  var pares = [].map.call(enlaces, function(a){ return {a:a, sec:document.querySelector(a.getAttribute('href'))}; })
+                .filter(function(p){ return p.sec; });
+  function marca(){
+    var mid = window.scrollY + window.innerHeight*0.45, act = null;
+    pares.forEach(function(p){ if(p.sec.offsetTop <= mid) act = p; });
+    pares.forEach(function(p){ p.a.classList.toggle('is-active', p === act); });
+  }
+  window.addEventListener('scroll', marca, {passive:true});
+  marca();
+  btn.classList.add('is-ready');
 }
 
 /* ── ITINERARIO: acordeón ── */
