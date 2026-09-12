@@ -1120,7 +1120,7 @@ button.dc-crown-btn.is-on + .dc-crown-name,.dc-crown-wrap:hover .dc-crown-name{o
 
         <div class="eyebrow" data-en="RSVP">Confirma tu Asistencia</div>
         <h2 class="rsvp-title" data-en-html="Your presence <em>means</em> so much">Tu presencia <em>significa</em> mucho</h2>
-        <p class="rsvp-text" data-en-html="Please confirm your attendance before <strong>October 21, 2026</strong>. Your reply means a lot to me.">Por favor confirma tu asistencia antes del <strong>21 de octubre de 2026</strong>. Tu confirmación es muy importante para mí.</p>
+        <p class="rsvp-text" data-en-html="Please confirm your attendance <strong>as soon as possible</strong>. Your reply means a lot to me.">Por favor confirma tu asistencia <strong>lo más pronto posible</strong>. Tu confirmación es muy importante para mí.</p>
 
         <p id="rsvp-name-display" style="display:none;font-family:'Great Vibes',cursive;font-size:clamp(30px,7vw,44px);color:var(--accent);line-height:1.2;margin:18px auto 4px;"></p>
 
@@ -1158,7 +1158,7 @@ button.dc-crown-btn.is-on + .dc-crown-name,.dc-crown-wrap:hover .dc-crown-name{o
 
         <div class="rsvp-deadline">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm.5 5v5.25l4.5 2.67-.75 1.23L11 13V7h1.5z"/></svg>
-          <span data-en="RSVP by · October 21, 2026">Fecha límite · 21 de octubre 2026</span>
+          <span data-en="Please reply as soon as possible">Confirma lo más pronto posible</span>
         </div>
       </div>
     </div>
@@ -1762,8 +1762,9 @@ function initEnvRain(){
   var pasesRaw = params.get('pases');
   var pases    = pasesRaw && /^\d+$/.test(pasesRaw) ? parseInt(pasesRaw, 10) : null;
 
-  /* Fecha limite: 21 de octubre de 2026 (mes 9 = octubre) */
-  var DEADLINE = new Date(2026, 9, 21, 23, 59, 59, 999);
+  /* Sin fecha limite publicada: el RSVP queda abierto hasta el dia del evento
+     (21 de noviembre de 2026, mes 10 = noviembre) */
+  var DEADLINE = new Date(2026, 10, 21, 12, 0, 0, 0);
   var frozen   = Date.now() > DEADLINE.getTime();
 
   var nameDisp  = document.getElementById('rsvp-name-display');
