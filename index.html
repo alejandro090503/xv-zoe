@@ -1281,6 +1281,7 @@ function applyLang(l){
   function revealInvitation(){
     prepareInvitation();
     gsap.to(envFlash,{opacity:0,duration:1.2,ease:'power2.out',onComplete:function(){envFlash.style.display='none';}});
+    setTimeout(function(){ envFlash.style.display='none'; },1600);
   }
   function toWhite(){
     if(flashStarted) return; flashStarted=true;
