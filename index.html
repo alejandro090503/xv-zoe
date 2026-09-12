@@ -742,7 +742,7 @@ button.dc-crown-btn.is-on + .dc-crown-name,.dc-crown-wrap:hover .dc-crown-name{o
 <!-- ENVELOPE -->
 <div id="envelope-screen" aria-label="Intro de la invitación">
   <img id="env-image" src="./intro-poster.jpg" alt="Invitación XV Años Zoe Galán">
-  <video id="env-video" src="https://bsjoelxktbvlavfoozhk.supabase.co/storage/v1/object/public/fotos-clientes/video/xv-zoe/intro.mp4" poster="./intro-poster.jpg" playsinline webkit-playsinline muted preload="auto"></video>
+  <video id="env-video" src="https://bsjoelxktbvlavfoozhk.supabase.co/storage/v1/object/public/fotos-clientes/video/xv-zoe/intro-v2.mp4" poster="./intro-poster.jpg" playsinline webkit-playsinline muted preload="auto"></video>
   <p class="envelope-hint" id="env-hint" data-en="Tap to begin">Toca para comenzar</p>
   <button id="env-skip" type="button"><span data-en="Skip">Saltar</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5l7 7-7 7M13 5l7 7-7 7"/></svg></button>
 </div>
@@ -1223,6 +1223,13 @@ window.scrollTo(0,0);
 history.scrollRestoration='manual';
 gsap.registerPlugin(ScrollTrigger);
 
+/* ── MÚSICA desde el gesto del idioma ── */
+function startMusic(){
+  var a=document.getElementById('bgAudio');
+  if(!a || !a.paused) return;
+  try{ a.volume=1; var p=a.play(); if(p&&p.catch) p.catch(function(){}); }catch(e){}
+}
+
 /* ── IDIOMA ── */
 var LANG='es';
 function applyLang(l){
@@ -1248,7 +1255,8 @@ function applyLang(l){
   var pre=(new URLSearchParams(location.search)).get('lang');
   var go=function(l){
     applyLang(l);
-    // play() dentro del gesto del usuario: iOS no deja arrancar video despues
+    // play() dentro del gesto del usuario: iOS no deja arrancar video ni audio despues
+    startMusic();
     if(typeof window.startIntro==='function') window.startIntro();
     scr.classList.add('is-out');
     setTimeout(function(){ scr.style.display='none'; },520);
@@ -1280,16 +1288,13 @@ function applyLang(l){
   }
   function revealInvitation(){
     prepareInvitation();
-    gsap.to(envFlash,{opacity:0,duration:1.2,ease:'power2.out',onComplete:function(){envFlash.style.display='none';}});
-    setTimeout(function(){ envFlash.style.display='none'; },1600);
+    gsap.to(envFlash,{opacity:0,duration:1.8,ease:'sine.inOut',delay:.15,onComplete:function(){envFlash.style.display='none';}});
+    setTimeout(function(){ envFlash.style.display='none'; },2300);
   }
   function toWhite(){
     if(flashStarted) return; flashStarted=true;
     gsap.to(envFlash,{opacity:1,duration:.8,ease:'power2.in',onComplete:revealInvitation});
   }
-  envVideo.addEventListener('timeupdate',function(){
-    if(envVideo.duration && envVideo.currentTime>=envVideo.duration-0.9) toWhite();
-  });
   envVideo.addEventListener('ended',function(){ gsap.set(envFlash,{opacity:1}); revealInvitation(); });
   envVideo.addEventListener('error',revealInvitation);
   envVideo.addEventListener('playing',function(){
@@ -1319,7 +1324,7 @@ function applyLang(l){
   };
   envScreen.addEventListener('click',function(e){
     if(e.target===skip||skip.contains(e.target)) return;
-    if(envScreen.classList.contains('need-tap')) play();
+    if(envScreen.classList.contains('need-tap')){ startMusic(); play(); }
   });
   skip.addEventListener('click',function(e){ e.stopPropagation(); toWhite(); });
   // con ?lang= el idioma se eligio antes de que existiera startIntro
@@ -1982,13 +1987,15 @@ function initEnvRain(){
 /* ── MÚSICA ── */
 (function(){
   const fab=document.getElementById('musicFab'),audio=document.getElementById('bgAudio');
-  let playing=false;
+  const pinta=()=>{
+    const on=!audio.paused;
+    fab.classList.toggle('playing',on);
+    fab.setAttribute('aria-label',on?'Pausar música':'Reproducir música');
+  };
+  audio.addEventListener('play',pinta);
+  audio.addEventListener('pause',pinta);
   fab.addEventListener('click',()=>{
-    playing=!playing;
-    if(playing){audio.play().catch(()=>{});fab.classList.add('playing');
-      fab.setAttribute('aria-label','Pausar música');}
-    else{audio.pause();fab.classList.remove('playing');
-      fab.setAttribute('aria-label','Reproducir música');}
+    if(audio.paused){audio.play().catch(()=>{});}else{audio.pause();}
   });
 })();
 </script>
