@@ -536,6 +536,16 @@ footer .fd{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:
 @keyframes hintPulse{0%,100%{opacity:.4;width:32px;}50%{opacity:1;width:54px;}}
 
 .rsvp-gracias{text-align:center;padding:8px 0 4px;}
+/* ── RSVP · contador de pases a ocupar ── */
+.rsvp-contador-nota{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:17.5px;line-height:1.55;color:var(--ink);text-align:center;max-width:420px;margin:0 auto 14px;}
+.rsvp-contador{display:flex;align-items:center;justify-content:center;gap:18px;max-width:420px;margin:0 auto 10px;padding:14px 20px;background:rgba(93,173,217,.10);border:1px solid rgba(47,115,176,.28);border-radius:14px;}
+.rsvp-contador-btn{width:48px;height:48px;flex-shrink:0;border-radius:50%;border:1.5px solid rgba(47,115,176,.45);background:rgba(255,255,255,.85);
+  font-family:'Jost',sans-serif;font-size:26px;font-weight:500;line-height:1;color:var(--accent);cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;}
+.rsvp-contador-btn:hover:not(:disabled){background:var(--accent);border-color:var(--accent);color:#fff;}
+.rsvp-contador-btn:disabled{opacity:.35;cursor:not-allowed;}
+.rsvp-contador-valor{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(40px,7vw,54px);color:var(--accent);line-height:1;min-width:64px;text-align:center;}
+.rsvp-contador-pie{font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-soft);text-align:center;margin:0 auto 22px;}
 .rsvp-gracias h3{font-family:'Great Vibes',cursive;font-size:46px;color:var(--accent);line-height:1.15;margin-bottom:10px;padding-top:8px;font-weight:400;}
 .rsvp-gracias p{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:19px;line-height:1.7;color:var(--ink);max-width:400px;margin:0 auto 24px;}
 .rsvp-editar{padding:14px 32px;border-radius:50px;border:1.5px solid rgba(47,115,176,.5);background:rgba(255,255,255,.7);
@@ -1184,13 +1194,24 @@ footer .fn{padding-left:.18em;padding-right:.18em;}
           <p id="rsvp-pases-note"></p>
 
           <div class="rsvp-pases-display" id="rsvp-pases-display" style="display:none">
-            <div class="rsvp-pases-label" data-en="Passes">Pases</div>
+            <div class="rsvp-pases-label" data-en="Passes assigned">Pases asignados</div>
             <div class="rsvp-pases-num" id="rsvp-pases-num">1</div>
           </div>
 
           <div class="rsvp-toggle">
             <button class="rsvp-toggle-btn" id="btnYes" type="button" data-en="I'll gladly attend">Asistiré con gusto</button>
             <button class="rsvp-toggle-btn" id="btnNo" type="button" data-en="I can't attend">No podré asistir</button>
+          </div>
+
+          <!-- Contador: cuántos de sus pases va a ocupar realmente -->
+          <div id="rsvp-contador-wrap" style="display:none">
+            <p class="rsvp-contador-nota" id="rsvpContadorNota"></p>
+            <div class="rsvp-contador">
+              <button class="rsvp-contador-btn" id="rsvpMenos" type="button" aria-label="Quitar un pase">−</button>
+              <span class="rsvp-contador-valor" id="rsvpContadorValor" aria-live="polite">1</span>
+              <button class="rsvp-contador-btn" id="rsvpMas" type="button" aria-label="Agregar un pase">+</button>
+            </div>
+            <p class="rsvp-contador-pie" id="rsvpContadorPie"></p>
           </div>
 
           <div class="rsvp-fields" id="rsvp-fields" style="display:none"></div>
@@ -1871,27 +1892,64 @@ function initEnvRain(){
     `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${t}&dates=20261121T173000Z/20261122T070000Z&details=${d}&location=${l}&ctz=America/New_York`;
 })();
 
-/* ── RSVP · panel-invitados ── */
+/* ── RSVP · panel-invitados — "X pases" con contador de pases a ocupar ── */
 /* El API particiona por `url_boda`; mandar `slug`/`proyecto` hace que el
    UPDATE no encuentre al invitado y devuelva no_match. */
 (function(){
   var PANEL_API = 'https://panel-invitados.vercel.app/api/confirmar';
   var RSVP_URL  = 'https://xv-zoe-galan.vercel.app';
 
-  var params   = new URLSearchParams(location.search);
-  var para     = (params.get('para') || '').trim();
-  var pasesRaw = params.get('pases');
-  var pases    = pasesRaw && /^\d+$/.test(pasesRaw) ? parseInt(pasesRaw, 10) : null;
-
   /* Sin fecha limite publicada: el RSVP queda abierto hasta el dia del evento
      (21 de noviembre de 2026, mes 10 = noviembre) */
   var DEADLINE = new Date(2026, 10, 21, 12, 0, 0, 0);
   var frozen   = Date.now() > DEADLINE.getTime();
 
+  /* Textos segun el idioma elegido en la pantalla de inicio. Se consulta al
+     momento de pintar, porque el invitado elige idioma despues de cargar. */
+  function t(es, en){ return window.LANG === 'en' ? en : es; }
+
+  /* Personalizacion robusta: WhatsApp y Messenger cortan la URL en el primer
+     espacio o & al pegarla. Un nombre como "Sr. & Sra. Lopez" llegaba truncado
+     y el panel lo registraba como otra invitacion. El panel genera un token
+     base64url en ?i=... (sin espacios, & ni %) que atraviesa intacto. Se
+     conserva ?para=&pases= para los links ya enviados. */
+  function decodeInvite(tok){
+    try{
+      var b64 = tok.replace(/-/g,'+').replace(/_/g,'/');
+      while(b64.length % 4) b64 += '=';
+      var bin = atob(b64), bytes = new Uint8Array(bin.length);
+      for(var i=0;i<bin.length;i++){ bytes[i] = bin.charCodeAt(i); }
+      var p = new TextDecoder().decode(bytes).split('|');
+      return { para:(p[0]||'').trim(), pases: parseInt(p[1],10) || 1 };
+    }catch(e){ return null; }
+  }
+  var qp = new URLSearchParams(location.search);
+  var hp = new URLSearchParams(location.hash.replace(/^#/,''));
+  var para = '', rawP = 1;
+  var token = qp.get('i') || hp.get('i');
+  if(token){
+    var dec = decodeInvite(token);
+    if(dec && dec.para){ para = dec.para; rawP = dec.pases; }
+  }
+  if(!para){
+    para = (qp.get('para') || hp.get('para') || '').trim();
+    rawP = parseInt(qp.get('pases') || hp.get('pases'), 10);
+  }
+  /* Tope: lo que se asigno en el panel. */
+  var pasesAsignados = (isNaN(rawP) || rawP < 1 || rawP > 20) ? 1 : rawP;
+  /* Lo que el invitado va a ocupar. Arranca en 1 y va sumando; nunca pasa del tope. */
+  var pasesAUsar = 1;
+
   var nameDisp  = document.getElementById('rsvp-name-display');
   var noteEl    = document.getElementById('rsvp-pases-note');
   var dispEl    = document.getElementById('rsvp-pases-display');
   var numEl     = document.getElementById('rsvp-pases-num');
+  var contWrap  = document.getElementById('rsvp-contador-wrap');
+  var contNota  = document.getElementById('rsvpContadorNota');
+  var contValor = document.getElementById('rsvpContadorValor');
+  var contPie   = document.getElementById('rsvpContadorPie');
+  var btnMenos  = document.getElementById('rsvpMenos');
+  var btnMas    = document.getElementById('rsvpMas');
   var fieldsEl  = document.getElementById('rsvp-fields');
   var btnYes    = document.getElementById('btnYes');
   var btnNo     = document.getElementById('btnNo');
@@ -1914,19 +1972,25 @@ function initEnvRain(){
     feedEl.style.display = msg ? 'block' : 'none';
   }
   function pintaPases(){
-    if(pases !== null){ numEl.textContent = pases; dispEl.style.display = 'flex'; }
-    else { dispEl.style.display = 'none'; }
+    if(!para){ dispEl.style.display = 'none'; return; }
+    numEl.textContent = pasesAsignados;
+    dispEl.style.display = 'flex';
   }
+
+  /* Un campo por pase que vaya a ocupar. Lo escrito se conserva al subir y
+     bajar el contador: savedNames guarda por posicion. */
   function renderFields(){
-    var total = pases !== null ? pases : 1;
     fieldsEl.innerHTML = '';
-    for(var i = 0; i < total; i++){
+    for(var i = 0; i < pasesAUsar; i++){
       var inp = document.createElement('input');
       inp.type = 'text';
       inp.className = 'rsvp-input';
-      inp.placeholder = total === 1 ? 'Tu nombre completo' : 'Nombre completo del invitado ' + (i + 1);
+      inp.placeholder = pasesAUsar === 1
+        ? t('Tu nombre completo', 'Your full name')
+        : t('Nombre completo del invitado ', 'Full name of guest ') + (i + 1);
       inp.autocomplete = 'off';
       inp.maxLength = 60;
+      inp.disabled = frozen;
       inp.value = savedNames[i] || '';
       (function(idx, el){
         el.addEventListener('input', function(){ savedNames[idx] = this.value; });
@@ -1934,22 +1998,44 @@ function initEnvRain(){
       fieldsEl.appendChild(inp);
     }
   }
+
+  function pintaContador(){
+    contValor.textContent = pasesAUsar;
+    btnMenos.disabled = frozen || pasesAUsar <= 1;
+    btnMas.disabled   = frozen || pasesAUsar >= pasesAsignados;
+    contNota.textContent = pasesAsignados === 1
+      ? t('Tienes 1 pase reservado para ti.', 'You have 1 pass reserved for you.')
+      : t('Tienes ' + pasesAsignados + ' pases reservados. Aumenta o disminuye el número de pases que vayas a ocupar.',
+          'You have ' + pasesAsignados + ' passes reserved. Increase or decrease the number of passes you will use.');
+    contPie.textContent = pasesAUsar >= pasesAsignados
+      ? t('Estás usando todos tus pases', 'You are using all your passes')
+      : t(pasesAUsar + ' de ' + pasesAsignados + ' pases', pasesAUsar + ' of ' + pasesAsignados + ' passes');
+  }
+
+  function setPases(n){
+    var nuevo = Math.min(pasesAsignados, Math.max(1, n));
+    if(nuevo === pasesAUsar) return;
+    pasesAUsar = nuevo;
+    pintaContador();
+    renderFields();
+    setStatus('', false);
+  }
+  btnMenos.addEventListener('click', function(){ if(!frozen) setPases(pasesAUsar - 1); });
+  btnMas.addEventListener('click',   function(){ if(!frozen) setPases(pasesAUsar + 1); });
+
   /* Cierra la bandeja y muestra el agradecimiento con el resumen. */
   function mostrarGracias(estado, nombres){
     var lista = (nombres || []).filter(function(x){ return x && x.trim(); });
     if(estado === 'confirmado'){
-      var en = (window.LANG === 'en');
-      gTitleEl.textContent = en ? 'Thank you for confirming!' : '¡Gracias por confirmar!';
+      gTitleEl.textContent = t('¡Gracias por confirmar!', 'Thank you for confirming!');
       gSubEl.textContent = lista.length === 1
-        ? (en ? 'I look forward to seeing you, ' + lista[0] + '.'
-              : 'Te espero con mucha ilusión, ' + lista[0] + '.')
-        : (en ? lista.length + ' spots confirmed: ' + lista.join(', ') + '.'
-              : 'Quedan confirmados ' + lista.length + ' lugares: ' + lista.join(', ') + '.');
+        ? t('Te espero con mucha ilusión, ' + lista[0] + '.', 'I look forward to seeing you, ' + lista[0] + '.')
+        : t('Quedan confirmados ' + lista.length + ' lugares: ' + lista.join(', ') + '.',
+            lista.length + ' spots confirmed: ' + lista.join(', ') + '.');
     } else {
-      gTitleEl.textContent = (window.LANG === 'en') ? 'Thank you for letting me know' : 'Gracias por avisarme';
-      gSubEl.textContent = (window.LANG === 'en')
-        ? "I'm sorry you can't join me. You will be missed."
-        : 'Lamento que no puedas acompañarme. Te voy a extrañar.';
+      gTitleEl.textContent = t('Gracias por avisarme', 'Thank you for letting me know');
+      gSubEl.textContent = t('Lamento que no puedas acompañarme. Te voy a extrañar.',
+                             "I'm sorry you can't join me. You will be missed.");
     }
     bandejaEl.style.display = 'none';
     graciasEl.style.display = 'block';
@@ -1964,13 +2050,22 @@ function initEnvRain(){
   }
   editarBtn.addEventListener('click', function(){ if(!frozen) abrirBandeja(); });
 
+  /* El contador y los campos solo existen si eligio asistir. */
   function selectRsvp(c){
     if(frozen) return;
     choice = c;
     btnYes.className = 'rsvp-toggle-btn' + (c === 'yes' ? ' rsvp-toggle-selected-yes' : '');
     btnNo.className  = 'rsvp-toggle-btn' + (c === 'no'  ? ' rsvp-toggle-selected-no'  : '');
-    if(c === 'yes'){ renderFields(); fieldsEl.style.display = 'flex'; }
-    else { fieldsEl.innerHTML = ''; fieldsEl.style.display = 'none'; }
+    if(c === 'yes'){
+      contWrap.style.display = '';
+      pintaContador();
+      renderFields();
+      fieldsEl.style.display = 'flex';
+    } else {
+      contWrap.style.display = 'none';
+      fieldsEl.innerHTML = '';
+      fieldsEl.style.display = 'none';
+    }
     setStatus('', false);
   }
   btnYes.addEventListener('click', function(){ selectRsvp('yes'); });
@@ -1980,10 +2075,6 @@ function initEnvRain(){
     nameDisp.textContent = para;
     nameDisp.style.display = 'block';
   }
-  if(!para && noteEl){
-    noteEl.textContent = 'Escribe tu nombre para confirmar tu lugar.';
-    noteEl.style.display = 'block';
-  }
   pintaPases();
 
   function applyFreeze(){
@@ -1991,8 +2082,10 @@ function initEnvRain(){
     btnYes.disabled = true;
     btnNo.disabled  = true;
     btn.disabled    = true;
-    btnText.textContent = 'Fecha límite alcanzada';
-    setStatus('La fecha para confirmar asistencia ya pasó.', true);
+    btnMenos.disabled = true;
+    btnMas.disabled   = true;
+    btnText.textContent = t('Fecha límite alcanzada', 'Deadline reached');
+    setStatus(t('La fecha para confirmar asistencia ya pasó.', 'The deadline to confirm has passed.'), true);
   }
 
   /* Precarga con guard: los controles quedan bloqueados hasta que el panel
@@ -2003,14 +2096,20 @@ function initEnvRain(){
       .then(function(r){ return r.json(); })
       .then(function(resp){
         var d = resp && resp.invitado;
-        if(d && typeof d.pases === 'number' && d.pases > 0 && d.pases <= 20){ pases = d.pases; pintaPases(); }
+        if(d && typeof d.pases === 'number' && d.pases > 0 && d.pases <= 20){
+          pasesAsignados = d.pases;
+          if(pasesAUsar > pasesAsignados) pasesAUsar = pasesAsignados;
+          pintaPases();
+        }
         if(!frozen){ btn.disabled = false; btnYes.disabled = false; btnNo.disabled = false; }
         if(d && (d.estado === 'confirmado' || d.estado === 'declino')){
           if(d.nombres_confirmados && d.nombres_confirmados.length){
             savedNames = d.nombres_confirmados.slice();
+            /* El contador arranca en cuantos pases habia ocupado antes. */
+            pasesAUsar = Math.min(pasesAsignados, Math.max(1, savedNames.length));
           }
           selectRsvp(d.estado === 'confirmado' ? 'yes' : 'no');
-          btnText.textContent = 'Actualizar respuesta';
+          btnText.textContent = t('Actualizar respuesta', 'Update answer');
           mostrarGracias(d.estado, savedNames);
         }
         applyFreeze();
@@ -2020,49 +2119,90 @@ function initEnvRain(){
         applyFreeze();
       });
   } else {
+    /* Sin link personalizado no hay invitacion que actualizar: se avisa antes
+       de que llene un formulario que nunca podria enviarse. El aviso lleva
+       data-en para que la pantalla de idioma lo traduzca si se elige despues. */
+    btn.disabled = true;
+    btn.style.opacity = '.55';
+    if(noteEl){
+      noteEl.setAttribute('data-en', 'To confirm, please open the personal link we sent you on WhatsApp. That link carries your name and passes; if you open it from a forwarded message or by typing the address, we cannot identify your invitation.');
+      noteEl.textContent = t(
+        'Para confirmar necesitas abrir el enlace personalizado que te enviamos por WhatsApp. Ese enlace lleva tu nombre y tus pases; si lo abres desde un reenvío o escribiendo la dirección a mano, no podemos identificar tu invitación.',
+        noteEl.getAttribute('data-en'));
+      noteEl.style.display = 'block';
+    }
     applyFreeze();
   }
 
   btn.addEventListener('click', function(){
     if(btn.disabled || frozen) return;
-    if(!choice){ setStatus('Por favor selecciona si asistirás o no.', true); return; }
+    if(!para){
+      setStatus(t('Para confirmar necesitas abrir el enlace personalizado que te enviamos por WhatsApp.',
+                  'To confirm, please open the personal link we sent you on WhatsApp.'), true);
+      return;
+    }
+    if(!choice){ setStatus(t('Por favor selecciona si asistirás o no.', 'Please let me know if you will attend.'), true); return; }
     var nombres = [];
     if(choice === 'yes'){
       nombres = Array.prototype.slice.call(fieldsEl.querySelectorAll('.rsvp-input'))
         .map(function(i){ return i.value.trim(); })
         .filter(function(x){ return x.length > 0; });
       if(nombres.length === 0){
-        setStatus('Por favor escribe al menos un nombre.', true);
+        setStatus(t('Por favor escribe al menos un nombre.', 'Please write at least one name.'), true);
         var first = fieldsEl.querySelector('.rsvp-input');
         if(first) first.focus();
         return;
       }
+      if(nombres.length < pasesAUsar){
+        var faltan = pasesAUsar - nombres.length;
+        setStatus(t('Faltan ' + faltan + ' nombre' + (faltan === 1 ? '' : 's') + '. Si van a ser menos, baja el contador de pases.',
+                    faltan + ' name' + (faltan === 1 ? ' is' : 's are') + ' missing. If fewer people are coming, lower the pass counter.'), true);
+        return;
+      }
     }
+    var estadoFinal = choice === 'yes' ? 'confirmado' : 'declino';
     btn.disabled = true;
-    btnText.textContent = 'Enviando…';
+    btnText.textContent = t('Enviando…', 'Sending…');
     setStatus('', false);
     fetch(PANEL_API, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        nombre: para || (nombres[0] || 'Invitado'),
-        url_boda: RSVP_URL,
-        estado: choice === 'yes' ? 'confirmado' : 'declino',
-        pases_confirmados: choice === 'yes' ? nombres.length : 0,
-        nombres_confirmados: choice === 'yes' ? nombres : []
+        nombre:              para,
+        url_boda:            RSVP_URL,
+        estado:              estadoFinal,
+        pases_confirmados:   estadoFinal === 'confirmado' ? nombres.length : 0,
+        nombres_confirmados: estadoFinal === 'confirmado' ? nombres : []
       })
     })
-      .then(function(res){ if(!res.ok) throw new Error('http ' + res.status); return res.json(); })
-      .then(function(data){
-        if(!data || data.ok !== true) throw new Error('no_match');
+      .then(function(r){
+        return r.json()
+          .then(function(d){ return { ok: r.ok, d: d }; })
+          .catch(function(){ return { ok: r.ok, d: null }; });
+      })
+      .then(function(res){
         btn.disabled = false;
-        btnText.textContent = 'Actualizar respuesta';
-        mostrarGracias(choice === 'yes' ? 'confirmado' : 'declino', nombres);
+        if(res.ok && res.d && res.d.ok === true){
+          btnText.textContent = t('Actualizar respuesta', 'Update answer');
+          mostrarGracias(estadoFinal, nombres);
+          return;
+        }
+        btnText.textContent = t('Reintentar', 'Try again');
+        var err = res.d && res.d.error;
+        setStatus(
+          err === 'no_match'
+            ? t('No pudimos identificar tu invitación. Abre el enlace personalizado que te enviamos por WhatsApp; ese es el único que registra tu confirmación.',
+                'We could not identify your invitation. Please open the personal link we sent you on WhatsApp; it is the only one that records your reply.')
+            : err === 'invitacion_borrada'
+              ? t('Esta invitación ya no está activa. Por favor contacta a la familia para que te envíen un enlace nuevo.',
+                  'This invitation is no longer active. Please contact the family for a new link.')
+              : t('Hubo un problema al enviar. Inténtalo de nuevo.', 'There was a problem sending your reply. Please try again.'),
+          true);
       })
       .catch(function(){
         btn.disabled = false;
-        btnText.textContent = 'Reintentar';
-        setStatus('No pudimos enviar tu confirmación. Verifica tu conexión e intenta de nuevo.', true);
+        btnText.textContent = t('Reintentar', 'Try again');
+        setStatus(t('Sin conexión. Verifica tu internet e inténtalo de nuevo.', 'No connection. Check your internet and try again.'), true);
       });
   });
 })();
