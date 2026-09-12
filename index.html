@@ -519,9 +519,17 @@ footer .fd{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:
 .lang-b:active{transform:translateY(1px);}
 
 /* ── ENVELOPE ── */
-#envelope-screen{position:fixed;inset:0;z-index:10000;overflow:hidden;cursor:pointer;opacity:0;background:#fff;}
-#env-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:2;transform:scale(1.18);}
-#env-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:3;opacity:0;transform:scale(1.18);}
+#envelope-screen{position:fixed;inset:0;z-index:10000;overflow:hidden;background:#dcebf8;}
+#env-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:2;}
+#env-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:3;opacity:0;}
+#env-skip{position:absolute;right:16px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:12;
+  display:none;align-items:center;gap:7px;min-height:44px;padding:11px 18px;border-radius:30px;cursor:pointer;
+  border:1px solid rgba(255,255,255,.75);background:rgba(14,36,64,.38);color:#fff;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  font-family:'Cinzel',serif;font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;}
+#env-skip svg{width:15px;height:15px;}
+#env-skip.on{display:inline-flex;animation:paneIn .5s ease both;}
+#envelope-screen.need-tap{cursor:pointer;}
 #env-flash{position:fixed;inset:0;background:#fff;z-index:9999;opacity:0;pointer-events:none;}
 .envelope-hint{position:absolute;bottom:50px;left:50%;transform:translateX(-50%);font-family:'Cormorant Garamond',serif;font-weight:600;font-size:14px;letter-spacing:4.5px;text-transform:uppercase;color:var(--accent);opacity:0;cursor:pointer;white-space:nowrap;z-index:10;text-shadow:0 1px 5px rgba(255,255,255,.85);}
 .envelope-hint::after{content:'';display:block;width:32px;height:1px;background:linear-gradient(90deg,transparent,rgba(93,173,217,.5),transparent);margin:10px auto 0;animation:hintPulse 2.2s ease-in-out infinite;}
@@ -732,10 +740,11 @@ button.dc-crown-btn.is-on + .dc-crown-name,.dc-crown-wrap:hover .dc-crown-name{o
 </div>
 
 <!-- ENVELOPE -->
-<div id="envelope-screen" role="button" aria-label="Toca para abrir tu invitación">
-  <img id="env-image" src="./sobre.png" alt="Invitación XV Años Zoe Galán">
-  <video id="env-video" src="./sobre-apertura.mp4" playsinline webkit-playsinline muted preload="auto"></video>
-  <p class="envelope-hint" id="env-hint" data-en="Tap to open">Toca para abrir</p>
+<div id="envelope-screen" aria-label="Intro de la invitación">
+  <img id="env-image" src="./intro-poster.jpg" alt="Invitación XV Años Zoe Galán">
+  <video id="env-video" src="https://bsjoelxktbvlavfoozhk.supabase.co/storage/v1/object/public/fotos-clientes/video/xv-zoe/intro.mp4" poster="./intro-poster.jpg" playsinline webkit-playsinline muted preload="auto"></video>
+  <p class="envelope-hint" id="env-hint" data-en="Tap to begin">Toca para comenzar</p>
+  <button id="env-skip" type="button"><span data-en="Skip">Saltar</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5l7 7-7 7M13 5l7 7-7 7"/></svg></button>
 </div>
 <div id="env-flash"></div>
 
@@ -1239,6 +1248,8 @@ function applyLang(l){
   var pre=(new URLSearchParams(location.search)).get('lang');
   var go=function(l){
     applyLang(l);
+    // play() dentro del gesto del usuario: iOS no deja arrancar video despues
+    if(typeof window.startIntro==='function') window.startIntro();
     scr.classList.add('is-out');
     setTimeout(function(){ scr.style.display='none'; },520);
   };
@@ -1249,23 +1260,20 @@ function applyLang(l){
   if(pre==='en'||pre==='es') go(pre);
 })();
 
-/* ── ENVELOPE ── */
+/* ── INTRO: 3 clips (sobre -> camino al castillo -> zapatilla) ── */
 (function () {
   var envScreen = document.getElementById('envelope-screen');
   var envImage  = document.getElementById('env-image');
   var envVideo  = document.getElementById('env-video');
   var envFlash  = document.getElementById('env-flash');
   var hint      = document.getElementById('env-hint');
-  var opened    = false;
+  var skip      = document.getElementById('env-skip');
+  var started=false, flashStarted=false, invitationReady=false, guard=null;
 
-  gsap.timeline()
-    .to(envScreen, { opacity:1, duration:1.2, ease:'power2.out', delay:0.3 })
-    .to(hint,      { opacity:1, duration:0.9, ease:'power2.out' }, '-=0.5');
-  gsap.to(envImage, { scale:1.20, duration:2.2, ease:'sine.inOut', repeat:-1, yoyo:true, delay:1.5 });
-
-  var flashStarted=false, invitationReady=false;
   function prepareInvitation(){
     if(invitationReady) return; invitationReady=true;
+    clearTimeout(guard);
+    try{ envVideo.pause(); }catch(e){}
     envScreen.style.display='none';
     document.querySelector('.wrap').style.visibility='visible';
     launchPage();
@@ -1274,24 +1282,47 @@ function applyLang(l){
     prepareInvitation();
     gsap.to(envFlash,{opacity:0,duration:1.2,ease:'power2.out',onComplete:function(){envFlash.style.display='none';}});
   }
-  envVideo.addEventListener('timeupdate',function(){
-    if(!flashStarted && envVideo.duration && envVideo.currentTime>=envVideo.duration-2){
-      flashStarted=true;
-      gsap.to(envFlash,{opacity:1,duration:1,ease:'power2.in',onComplete:revealInvitation});
-    }
-  });
-  envVideo.addEventListener('ended',function(){gsap.set(envFlash,{opacity:1});revealInvitation();});
-  function openEnvelope(){
-    if(opened) return; opened=true;
-    gsap.killTweensOf(envImage);
-    gsap.to(hint,{opacity:0,duration:0.2});
-    var p=envVideo.play();
-    gsap.to(envImage,{opacity:0,duration:0.55,ease:'power2.inOut',onComplete:function(){envImage.style.display='none';}});
-    gsap.to(envVideo,{opacity:1,duration:0.55,ease:'power2.inOut'});
-    if(p!==undefined){p.catch(function(){revealInvitation();});}
+  function toWhite(){
+    if(flashStarted) return; flashStarted=true;
+    gsap.to(envFlash,{opacity:1,duration:.8,ease:'power2.in',onComplete:revealInvitation});
   }
-  envScreen.addEventListener('click',openEnvelope);
-  envScreen.addEventListener('touchstart',function(e){e.preventDefault();openEnvelope();},{passive:false});
+  envVideo.addEventListener('timeupdate',function(){
+    if(envVideo.duration && envVideo.currentTime>=envVideo.duration-0.9) toWhite();
+  });
+  envVideo.addEventListener('ended',function(){ gsap.set(envFlash,{opacity:1}); revealInvitation(); });
+  envVideo.addEventListener('error',revealInvitation);
+  envVideo.addEventListener('playing',function(){
+    clearTimeout(guard);
+    gsap.to(envVideo,{opacity:1,duration:.5,ease:'power2.out',
+      onComplete:function(){ envImage.style.display='none'; }});
+    gsap.to(hint,{opacity:0,duration:.2});
+    envScreen.classList.remove('need-tap');
+    skip.classList.add('on');
+  });
+
+  function pedirToque(){
+    envScreen.classList.add('need-tap');
+    gsap.to(hint,{opacity:1,duration:.6});
+  }
+  function play(){
+    var p=envVideo.play();
+    if(p!==undefined){ p.catch(pedirToque); }
+    // si la red no deja arrancar el video, no dejamos al invitado atorado
+    clearTimeout(guard);
+    guard=setTimeout(function(){ if(envVideo.paused||envVideo.currentTime<0.2) revealInvitation(); },12000);
+  }
+  window.startIntro=function(){
+    if(started) return; started=true;
+    play();
+  };
+  envScreen.addEventListener('click',function(e){
+    if(e.target===skip||skip.contains(e.target)) return;
+    if(envScreen.classList.contains('need-tap')) play();
+  });
+  skip.addEventListener('click',function(e){ e.stopPropagation(); toWhite(); });
+  // con ?lang= el idioma se eligio antes de que existiera startIntro
+  var ls=document.getElementById('lang-screen');
+  if(!ls || ls.classList.contains('is-out')) window.startIntro();
 }());
 
 /* ── HERO ENTRANCE ── */
