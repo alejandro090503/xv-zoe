@@ -14,6 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Jost:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <style>
@@ -775,6 +776,21 @@ button.dc-crown-btn.is-on + .dc-crown-name,.dc-crown-wrap:hover .dc-crown-name{o
 footer .fn{padding-left:.18em;padding-right:.18em;}
 
 .rv{will-change:transform,opacity;}
+
+/* ── Codigos de acceso QR (panel Celestial) ── */
+#qrSection{margin-top:28px}
+.rsvp-qr-title{font-family:'Great Vibes',cursive;font-size:clamp(30px,8vw,40px);color:var(--accent);text-align:center;margin-bottom:6px}
+.rsvp-qr-hint{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:17px;color:var(--dark);opacity:.85;text-align:center;line-height:1.6;margin:0 auto 22px;max-width:420px}
+.rsvp-qr-grid{display:flex;flex-direction:column;gap:16px;align-items:center}
+.rsvp-qr-card{background:rgba(255,255,255,.9);border:1.5px solid rgba(47,115,176,.28);border-radius:18px;padding:22px 20px;text-align:center;width:100%;max-width:300px;box-shadow:0 8px 26px rgba(14,36,64,.12)}
+.rsvp-qr-card .qr-img{background:#fff;padding:10px;border-radius:12px;display:inline-block;line-height:0}
+.rsvp-qr-card .qr-img canvas{display:block;width:180px;height:180px}
+.rsvp-qr-name{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:clamp(19px,5vw,22px);color:var(--dark);margin-top:14px}
+.rsvp-qr-mesa{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:16px;color:var(--accent);margin-top:2px}
+.rsvp-qr-code-lbl{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-top:12px}
+.rsvp-qr-code-txt{font-family:'Courier New',monospace;font-size:15px;letter-spacing:2px;color:var(--dark);margin-top:4px;user-select:all;-webkit-user-select:all}
+.rsvp-qr-dl{display:inline-flex;align-items:center;justify-content:center;margin-top:14px;padding:10px 24px;min-height:44px;background:transparent;border:1.5px solid rgba(47,115,176,.45);border-radius:10px;color:var(--dark);font-family:'Cormorant Garamond',serif;font-weight:700;font-size:16px;cursor:pointer;transition:background .2s}
+.rsvp-qr-dl:hover{background:rgba(159,205,255,.25)}
 </style>
 </head>
 <body>
@@ -1227,6 +1243,12 @@ footer .fn{padding-left:.18em;padding-right:.18em;}
           <h3 id="rsvpGraciasTitle">¡Gracias por confirmar!</h3>
           <p id="rsvpGraciasSub"></p>
           <button class="rsvp-editar" id="rsvpEditarBtn" type="button" data-en="Update my answer">Actualizar mi respuesta</button>
+        </div>
+
+        <div id="qrSection" style="display:none">
+          <p class="rsvp-qr-title" data-en="Your access codes">Tus códigos de acceso</p>
+          <p class="rsvp-qr-hint" data-en-html="Show your QR code at the entrance.<br>You can display it on your phone or download it.">Presenta tu código QR en la entrada.<br>Puedes mostrarlo desde el celular o descargarlo.</p>
+          <div class="rsvp-qr-grid" id="qrGrid"></div>
         </div>
 
         <div class="rsvp-deadline">
@@ -1892,11 +1914,11 @@ function initEnvRain(){
     `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${t}&dates=20261121T173000Z/20261122T070000Z&details=${d}&location=${l}&ctz=America/New_York`;
 })();
 
-/* ── RSVP · panel-invitados — "X pases" con contador de pases a ocupar ── */
+/* ── RSVP · panel Celestial (QR) — "X pases" con contador de pases a ocupar ── */
 /* El API particiona por `url_boda`; mandar `slug`/`proyecto` hace que el
    UPDATE no encuentre al invitado y devuelva no_match. */
 (function(){
-  var PANEL_API = 'https://panel-invitados.vercel.app/api/confirmar';
+  var PANEL_API = 'https://panel-invitados-qr.vercel.app/api/confirmar';
   var RSVP_URL  = 'https://xv-zoe-galan.vercel.app';
 
   /* Sin fecha limite publicada: el RSVP queda abierto hasta el dia del evento
@@ -2077,6 +2099,60 @@ function initEnvRain(){
   }
   pintaPases();
 
+  /* ── Codigos de acceso: uno por persona confirmada ── */
+  var qrSec  = document.getElementById('qrSection');
+  var qrGrid = document.getElementById('qrGrid');
+  function paintQrs(qrs){
+    if(!qrSec || !qrGrid || typeof QRCode === 'undefined') return;
+    qrGrid.innerHTML = '';
+    qrs.forEach(function(q){
+      var card = document.createElement('div'); card.className = 'rsvp-qr-card';
+      var box  = document.createElement('div'); box.className = 'qr-img';
+      var cv   = document.createElement('canvas'); box.appendChild(cv); card.appendChild(box);
+      QRCode.toCanvas(cv, q.codigo, { width:180, margin:1, color:{ dark:'#0E2440', light:'#FFFFFF' } }, function(){});
+      var nm = document.createElement('p'); nm.className = 'rsvp-qr-name'; nm.textContent = q.nombre_persona; card.appendChild(nm);
+      if(q.mesa){ var ms = document.createElement('p'); ms.className = 'rsvp-qr-mesa'; ms.textContent = t('Mesa ', 'Table ') + q.mesa; card.appendChild(ms); }
+      var lbl = document.createElement('p'); lbl.className = 'rsvp-qr-code-lbl'; lbl.textContent = t('Código de respaldo', 'Backup code'); card.appendChild(lbl);
+      var ct  = document.createElement('p'); ct.className = 'rsvp-qr-code-txt'; ct.textContent = q.codigo; card.appendChild(ct);
+      var dl  = document.createElement('button'); dl.type = 'button'; dl.className = 'rsvp-qr-dl'; dl.textContent = t('Descargar', 'Download');
+      dl.addEventListener('click', function(){
+        QRCode.toDataURL(q.codigo, { width:1024, margin:2, color:{ dark:'#0E2440', light:'#FFFFFF' } }, function(err, url){
+          if(err) return;
+          var a = document.createElement('a'); a.href = url;
+          a.download = 'qr-' + q.nombre_persona.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') + '.png';
+          a.click();
+        });
+      });
+      card.appendChild(dl);
+      qrGrid.appendChild(card);
+    });
+    qrSec.style.display = 'block';
+  }
+  function showQrsPending(){
+    if(!qrSec || !qrGrid) return;
+    qrGrid.innerHTML = '';
+    var p = document.createElement('p');
+    p.className = 'rsvp-qr-hint';
+    p.textContent = t('Tus códigos de acceso estarán disponibles cuando se acerque el evento. Vuelve a esta página más adelante.',
+                      'Your access codes will be available closer to the event. Please come back to this page later.');
+    qrGrid.appendChild(p);
+    qrSec.style.display = 'block';
+  }
+  function hideQrs(){ if(qrSec) qrSec.style.display = 'none'; }
+  /* La invitacion se borro en el panel: se desactiva de forma definitiva */
+  function invitacionNoDisponible(){
+    frozen = true;
+    btn.disabled = true; btnYes.disabled = true; btnNo.disabled = true;
+    btnMenos.disabled = true; btnMas.disabled = true;
+    if(editarBtn) editarBtn.disabled = true;
+    graciasEl.style.display = 'none';
+    bandejaEl.style.display = 'block';
+    btnText.textContent = t('Invitación no disponible', 'Invitation unavailable');
+    hideQrs();
+    setStatus(t('Esta invitación ya no está disponible. Por favor contacta a la familia.',
+                'This invitation is no longer available. Please contact the family.'), true);
+  }
+
   function applyFreeze(){
     if(!frozen) return;
     btnYes.disabled = true;
@@ -2096,6 +2172,12 @@ function initEnvRain(){
       .then(function(r){ return r.json(); })
       .then(function(resp){
         var d = resp && resp.invitado;
+        if(!d && resp && resp.ok){ invitacionNoDisponible(); return; }
+        /* Fecha limite del panel (si la hay) manda sobre el fallback */
+        if(resp && resp.boda && resp.boda.fecha_limite_rsvp){
+          var lim = new Date(resp.boda.fecha_limite_rsvp);
+          if(!isNaN(lim.getTime())){ DEADLINE = lim; frozen = Date.now() > DEADLINE.getTime(); }
+        }
         if(d && typeof d.pases === 'number' && d.pases > 0 && d.pases <= 20){
           pasesAsignados = d.pases;
           if(pasesAUsar > pasesAsignados) pasesAUsar = pasesAsignados;
@@ -2111,6 +2193,10 @@ function initEnvRain(){
           selectRsvp(d.estado === 'confirmado' ? 'yes' : 'no');
           btnText.textContent = t('Actualizar respuesta', 'Update answer');
           mostrarGracias(d.estado, savedNames);
+          if(d.estado === 'confirmado'){
+            if(resp.qrs && resp.qrs.length) paintQrs(resp.qrs);
+            else showQrsPending();
+          }
         }
         applyFreeze();
       })
@@ -2171,20 +2257,37 @@ function initEnvRain(){
         nombre:              para,
         url_boda:            RSVP_URL,
         estado:              estadoFinal,
+        pases:               pasesAsignados,
         pases_confirmados:   estadoFinal === 'confirmado' ? nombres.length : 0,
         nombres_confirmados: estadoFinal === 'confirmado' ? nombres : []
       })
     })
       .then(function(r){
         return r.json()
-          .then(function(d){ return { ok: r.ok, d: d }; })
-          .catch(function(){ return { ok: r.ok, d: null }; });
+          .then(function(d){ return { ok: r.ok, status: r.status, d: d }; })
+          .catch(function(){ return { ok: r.ok, status: r.status, d: null }; });
       })
       .then(function(res){
         btn.disabled = false;
         if(res.ok && res.d && res.d.ok === true){
           btnText.textContent = t('Actualizar respuesta', 'Update answer');
           mostrarGracias(estadoFinal, nombres);
+          if(estadoFinal === 'confirmado'){
+            if(res.d.qrs && res.d.qrs.length) paintQrs(res.d.qrs);
+            else showQrsPending();
+          } else {
+            hideQrs();
+          }
+          return;
+        }
+        var codigoErr = res.d && res.d.error;
+        if(res.status === 404 && (codigoErr === 'invitacion_no_disponible' || codigoErr === 'no_match')){
+          invitacionNoDisponible();
+          return;
+        }
+        if(res.status === 403 && codigoErr === 'rsvp_cerrado'){
+          frozen = true;
+          applyFreeze();
           return;
         }
         btnText.textContent = t('Reintentar', 'Try again');
