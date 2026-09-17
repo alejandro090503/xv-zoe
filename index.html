@@ -440,6 +440,11 @@ section{padding:62px 26px;position:relative;}
 .rsvp-ornament{display:block;margin:0 auto 28px;width:min(280px,75vw);height:auto}
 .rsvp-title{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(32px,4.2vw,52px);color:var(--dark);margin-bottom:18px;line-height:1.15;}
 .rsvp-title em{color:var(--accent);font-style:italic;}
+.rsvp-nombre{font-family:'Great Vibes',cursive;font-size:clamp(46px,12vw,62px);line-height:1.1;
+  text-align:center;margin:2px auto 14px;padding:.06em .16em .24em;
+  background-image:linear-gradient(100deg,#6B4F1C 0%,#8A6A28 20%,#C9A04E 32%,#A8822F 40%,#6B4F1C 58%,#B98F3C 80%,#6B4F1C 100%);
+  background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:goldSweep 6s linear infinite;}
 .rsvp-text{font-family:'Cormorant Garamond',serif;font-size:clamp(17px,1.6vw,19px);color:var(--ink);line-height:1.8;margin-bottom:36px;font-weight:600;max-width:420px;margin-left:auto;margin-right:auto;}
 .rsvp-divider{display:flex;align-items:center;gap:14px;margin-bottom:32px;max-width:320px;margin-left:auto;margin-right:auto;}
 .rsvp-divider::before,.rsvp-divider::after{content:"";flex:1;height:1px;background:linear-gradient(to right,transparent,rgba(93,173,217,.45),transparent);}
@@ -953,14 +958,7 @@ footer .fn{padding-left:.18em;padding-right:.18em;}
     <p class="loc-intro rv" data-en="I would love for you to join me!">¡Me encantaría que me acompañaras!</p>
     <div class="loc-pin rv"><img src="./ic-pin.svg" alt=""></div>
 
-    <div class="loc-tabs rv" role="tablist">
-      <button class="loc-tab is-on" id="tabMisa" type="button" role="tab" aria-selected="true"
-              aria-controls="paneMisa" data-pane="paneMisa" data-en="Mass">Misa</button>
-      <button class="loc-tab" id="tabRecep" type="button" role="tab" aria-selected="false"
-              aria-controls="paneRecep" data-pane="paneRecep" data-en="Reception">Recepción</button>
-    </div>
-
-    <div class="loc-pane is-on" id="paneMisa" role="tabpanel" aria-labelledby="tabMisa">
+    <div>
     <div class="loc-card rv">
       <div class="loc-photo"><img src="./foto-iglesia.jpg" alt="Christ Our King and Savior" loading="lazy"></div>
       <div class="lt" data-en="Mass">Misa</div>
@@ -970,14 +968,11 @@ footer .fn{padding-left:.18em;padding-right:.18em;}
       <div class="loc-times">
         <div><div class="lt-lbl" data-en="Religious ceremony">Ceremonia religiosa</div><div class="lt-h">12:30 pm</div></div>
       </div>
-      <div class="map-wrap">
-        <iframe src="https://www.google.com/maps?q=Christ+Our+King+and+Savior,+6341+Lake+Oconee+Pkwy,+Greensboro,+GA+30642&amp;hl=es&amp;z=15&amp;output=embed" width="100%" height="210" style="border:0;display:block;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mapa de la iglesia"></iframe>
-      </div>
       <a class="btn" href="https://maps.app.goo.gl/bnBDjL2BPpchJLtD9" target="_blank" rel="noopener" data-en="Get Directions">Cómo Llegar</a>
     </div>
     </div>
 
-    <div class="loc-pane" id="paneRecep" role="tabpanel" aria-labelledby="tabRecep">
+    <div>
     <div class="loc-card rv">
       <div class="loc-photo"><img src="./foto-salon.jpg" alt="The Ivy on the Plains" loading="lazy"></div>
       <div class="lt" data-en="Reception">Recepción</div>
@@ -986,9 +981,6 @@ footer .fn{padding-left:.18em;padding-right:.18em;}
       <p>White Plains, Georgia 30678</p>
       <div class="loc-times">
         <div><div class="lt-lbl" data-en="Reception">Recepción</div><div class="lt-h">3:00 pm</div></div>
-      </div>
-      <div class="map-wrap">
-        <iframe src="https://www.google.com/maps?q=The+Ivy+on+the+Plains,+1831+Jernigan+Bridge+Rd,+White+Plains,+GA+30678&amp;hl=es&amp;z=15&amp;output=embed" width="100%" height="210" style="border:0;display:block;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mapa del salón"></iframe>
       </div>
       <a class="btn" href="https://www.google.com/maps/search/?api=1&amp;query=The+Ivy+on+the+Plains%2C+1831+Jernigan+Bridge+Rd%2C+White+Plains%2C+GA+30678" target="_blank" rel="noopener" data-en="Get Directions">Cómo Llegar</a>
     </div>
@@ -1138,8 +1130,8 @@ footer .fn{padding-left:.18em;padding-right:.18em;}
             <path d="M18 8 Q26 3 34 8"/>
             <rect x="20" y="28" width="12" height="2.5" rx="1.25" fill="currentColor" stroke="none" opacity=".4"/>
           </svg>
-          <p class="env-title" data-en-html="Your presence is my greatest gift">Tu presencia es mi mejor regalo</p>
-          <p class="env-desc" data-en-html="On the day of the event there will be a box where you may leave your envelope with love.">El día del evento habrá una urna donde podrás depositar tu sobre con mucho cariño.</p>
+          <p class="env-title" data-en-html="Your presence is my greatest gift">Tu presencia es mi mayor regalo</p>
+          <p class="env-desc" data-en-html="but if you would like to give me something, I would prefer it to be cash through a shower of envelopes.">pero si deseas tener un detalle conmigo, preferiría que fuera en efectivo mediante lluvia de sobres.</p>
         </div>
       </button>
       <p class="env-tap-hint" id="envGiftHint" data-en="Tap to open">Toca para abrir</p>
@@ -1197,7 +1189,8 @@ footer .fn{padding-left:.18em;padding-right:.18em;}
 
         <div class="eyebrow" data-en="RSVP">Confirma tu Asistencia</div>
         <h2 class="rsvp-title" data-en-html="Distinguished <em>Guests</em>">Distinguidos <em>Concurrentes</em></h2>
-        <p class="rsvp-text" data-en-html="Distinguished guests; your presence is requested at the grand event in honor of our princess Zoe.<br>Your presence is very important to us, which is why you were carefully selected to be part of this great occasion.<br>Please confirm your attendance and number of companions so we can send you your boarding passes to a magical and unforgettable day!!">Distinguida concurrencia; se convoca su presencia al gran evento en honor a nuestra princesa Zoe.<br>Tu presencia es muy importante para nosotros por esa razón fuiste minuciosamente seleccionado para formar parte de este gran acontecimiento.<br>Por favor confírmame tu asistencia y número de acompañantes para hacerte llegar tus boletos de abordaje a un día mágico e inolvidable!!</p>
+        <p class="rsvp-nombre">Zoe</p>
+        <p class="rsvp-text" data-en-html="Your presence is very important to us, which is why you were carefully selected to be part of this great occasion.<br>Please confirm your attendance and number of companions so we can send you your boarding passes to a magical and unforgettable day!!">Tu presencia es muy importante para nosotros por esa razón fuiste minuciosamente seleccionado para formar parte de este gran acontecimiento.<br>Por favor confirma tu asistencia y número de acompañantes para hacerte llegar tus boletos de abordaje a un día mágico e inolvidable!!</p>
 
         <p id="rsvp-name-display" style="display:none;font-family:'Great Vibes',cursive;font-size:clamp(30px,7vw,44px);color:var(--accent);line-height:1.2;margin:18px auto 4px;"></p>
 
@@ -2207,15 +2200,8 @@ function initEnvRain(){
     /* Sin link personalizado no hay invitacion que actualizar: se avisa antes
        de que llene un formulario que nunca podria enviarse. El aviso lleva
        data-en para que la pantalla de idioma lo traduzca si se elige despues. */
-    btn.disabled = true;
-    btn.style.opacity = '.55';
-    if(noteEl){
-      noteEl.setAttribute('data-en', 'To confirm, please open the personal link we sent you on WhatsApp. That link carries your name and passes; if you open it from a forwarded message or by typing the address, we cannot identify your invitation.');
-      noteEl.textContent = t(
-        'Para confirmar necesitas abrir el enlace personalizado que te enviamos por WhatsApp. Ese enlace lleva tu nombre y tus pases; si lo abres desde un reenvío o escribiendo la dirección a mano, no podemos identificar tu invitación.',
-        noteEl.getAttribute('data-en'));
-      noteEl.style.display = 'block';
-    }
+    /* El aviso ya no se muestra de entrada (la clienta lo pidio fuera):
+       solo aparece si tocan Confirmar sin haber entrado por su link. */
     applyFreeze();
   }
 
