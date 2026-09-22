@@ -781,6 +781,24 @@ button.dc-crown-btn.is-on + .dc-crown-name,.dc-crown-wrap:hover .dc-crown-name{o
 .env-title{padding:.1em .16em .28em !important;margin-bottom:-.2em;}
 footer .fn{padding-left:.18em;padding-right:.18em;}
 
+/* ── MARCOS FLORALES: el contenido queda dentro del marco ── */
+.marco{position:relative;padding:76px 42px 80px;isolation:isolate;}
+.marco > *{position:relative;z-index:1;}
+/* velo suave para que el texto se lea sobre cualquier fondo */
+.marco::before{content:'';position:absolute;inset:9% 11%;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse at center,rgba(255,255,255,.92) 0%,rgba(255,255,255,.78) 62%,rgba(255,255,255,0) 100%);
+  filter:blur(2px);}
+/* el marco va encima, sin estorbar al dedo */
+.marco::after{content:'';position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:var(--marco) center/100% 100% no-repeat;
+  opacity:0;transition:opacity 1.1s ease;}
+.marco.is-in::after{opacity:.96;}
+.marco-a{--marco:url('./marco-1.png');}
+.marco-b{--marco:url('./marco-2.png');}
+@media (max-width:380px){.marco{padding:62px 30px 66px;}}
+@media (min-width:768px){.marco{padding:92px 58px 96px;}}
+@media (prefers-reduced-motion:reduce){.marco::after{transition:none;opacity:.96;}}
+
 .rv{will-change:transform,opacity;}
 
 /* ── Codigos de acceso QR (panel Celestial) ── */
@@ -899,6 +917,7 @@ footer .fn{padding-left:.18em;padding-right:.18em;}
 
   <!-- MIS PAPÁS -->
   <section id="sfam" class="rv">
+    <div class="marco marco-a">
     <h2 class="sec-title" data-en="My Parents">Mis Padres</h2>
     <div class="heart-div">
       <span class="hd-bar"></span>
@@ -908,10 +927,12 @@ footer .fn{padding-left:.18em;padding-right:.18em;}
     <div class="fam-block">
       <div class="fam-names">Antonio Galán<span class="fam-amp">y</span>Carmen Reyes</div>
     </div>
+  </div>
   </section>
 
   <!-- MIS PADRINOS -->
   <section class="rv">
+    <div class="marco marco-b">
     <h2 class="sec-title" data-en="My Godparents">Mis Padrinos</h2>
     <div class="heart-div">
       <span class="hd-bar"></span>
@@ -921,10 +942,12 @@ footer .fn{padding-left:.18em;padding-right:.18em;}
     <div class="fam-block">
       <div class="fam-names">Julian Rojas<span class="fam-amp">e</span>Isabel Santiago</div>
     </div>
+  </div>
   </section>
 
   <!-- CHAMBELÁN DE HONOR -->
   <section class="rv" style="padding-top:24px;">
+    <div class="marco marco-a">
     <h2 class="sec-title" data-en="Chambelán of Honor">Chambelán de Honor</h2>
     <div class="heart-div">
       <span class="hd-bar"></span>
@@ -934,6 +957,7 @@ footer .fn{padding-left:.18em;padding-right:.18em;}
     <div class="fam-block">
       <div class="fam-names">Anthony Galán</div>
     </div>
+  </div>
   </section>
 
   <!-- COUNTDOWN -->
@@ -990,10 +1014,12 @@ footer .fn{padding-left:.18em;padding-right:.18em;}
 
   <!-- CALENDARIO -->
   <section class="rv" style="text-align:center;padding-top:8px;">
+    <div class="marco marco-b">
     <div class="eyebrow" data-en="Don't forget">No lo olvides</div>
     <h2 class="sec-title" data-en="Save the Date">Guárdalo</h2>
     <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;color:var(--dark);margin-bottom:18px;" data-en-html="Add the event to your calendar">Agrega el evento a tu calendario</p>
     <a class="btn" id="gcalBtn" href="#" target="_blank" rel="noopener" data-en="Add to Google Calendar">Añadir a Google Calendar</a>
+  </div>
   </section>
 
   <!-- ITINERARIO -->
@@ -1047,6 +1073,7 @@ footer .fn{padding-left:.18em;padding-right:.18em;}
 
   <!-- DRESS CODE -->
   <section id="sdc" class="rv">
+    <div class="marco marco-a">
     <div class="eyebrow" data-en="Dress Code">Etiqueta</div>
     <h2 class="sec-title" data-en="Dress Code">Código de Vestimenta</h2>
     <div class="dc-note" data-en="Formal">Formal</div>
@@ -1081,6 +1108,7 @@ footer .fn{padding-left:.18em;padding-right:.18em;}
         <span class="dc-crown-name" data-en="Silver">Plateado</span>
       </span>
     </div>
+  </div>
   </section>
 
   <!-- LLUVIA DE SOBRES -->
@@ -1444,6 +1472,7 @@ function launchPage(){
   initItinTrack();
   initBgScroll();
   initMenu();
+  initMarcos();
   initItinAccordion();
   initLocTabs();
   initLightbox();
@@ -1539,6 +1568,22 @@ function initCrossfade(){
       gsap.set('#cfImg3',{opacity:i3});
     }
   });
+}
+
+/* ── MARCOS: entran con un fundido al asomarse ── */
+function initMarcos(){
+  var ms = [].slice.call(document.querySelectorAll('.marco'));
+  if(!ms.length) return;
+  function mira(){
+    var h = window.innerHeight;
+    ms.forEach(function(m){
+      var r = m.getBoundingClientRect();
+      if(r.top < h * 0.92 && r.bottom > 0) m.classList.add('is-in');
+    });
+  }
+  window.addEventListener('scroll', mira, {passive:true});
+  window.addEventListener('resize', mira);
+  mira();
 }
 
 /* ── MENÚ ── */
