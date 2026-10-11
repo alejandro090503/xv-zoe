@@ -420,6 +420,12 @@ section{padding:62px 26px;position:relative;}
 .qr-card{display:inline-block;background:#fff;padding:14px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.35);margin:14px 0 18px;}
 .qr-card img{width:148px;height:148px;display:block;}
 .album-btn{display:inline-flex;align-items:center;gap:8px;margin-top:6px;padding:13px 30px;background:rgba(255,255,255,.95);color:var(--dark);border-radius:30px;font-family:'Cinzel',serif;font-size:11px;text-transform:uppercase;letter-spacing:2px;text-decoration:none;}
+.album-qr{position:relative;display:inline-flex;flex-direction:column;align-items:center;gap:6px;}
+.album-qr .qr-card{margin:14px 0 8px;}
+.album-qr.bloqueado .qr-card img{filter:blur(7px);opacity:.75;}
+.album-qr.bloqueado .album-btn{pointer-events:none;opacity:.45;}
+.album-aviso{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:16px;line-height:1.7;color:#fff;opacity:.9;margin:12px auto 0;max-width:300px;}
+.album-qr:not(.bloqueado) + .album-aviso{display:none;}
 
 /* ── SOLO ADULTOS ── */
 .kids{text-align:center;}
@@ -1186,12 +1192,27 @@ footer .fn{padding-left:.18em;padding-right:.18em;}
     <div class="album-bg"></div>
     <div class="album-veil"></div>
     <div class="album-inner">
-      <h2 class="sec-title rv" data-en="Share your Photos">Comparte tus Fotos</h2>
+      <h2 class="sec-title rv" data-en="Photo album">Álbum de fotos</h2>
       <p class="album-sub rv" data-en-html="Help me create unforgettable memories. Share all your photos on Instagram with the hashtag:">Ayúdame a crear recuerdos inolvidables. Comparte todas tus fotos en Instagram con el hashtag:</p>
       <div class="album-hash rv">#ZoeXV</div>
       <div class="album-cam rv"><img src="./ic-camara.svg" alt=""></div>
-      <p class="album-sub rv" data-en-html="Or upload the moments you capture with your phone to my shared album by scanning the code:">O sube los momentos que captures con tu celular a mi álbum compartido escaneando el código:</p>
-      <div class="qr-card rv"><img src="./qr-album.png" alt="Código QR del álbum compartido"></div>
+      <p class="album-sub rv" data-en="Help us keep every moment: upload here the photos you take during the event.">Ayúdanos a guardar cada momento: sube aquí las fotos que tomes durante el evento.</p>
+      <!-- Álbum de Elysium: el QR abre /album → panel-invitados.vercel.app/subir/xv-zoe-galan -->
+      <div class="album-qr rv" data-fecha="2026-11-21">
+        <div class="qr-card"><img src="./qr-album.png" alt="Código QR del álbum de fotos" width="148" height="148"></div>
+        <a class="album-btn" href="/album" data-en="Upload my photos">Subir mis fotos</a>
+      </div>
+      <p class="album-aviso rv" data-en="The photo album opens on the day of the event. Come back here and upload all your photos from the night ✨">El álbum de fotos se habilita el día del evento. Regresa aquí y sube todas tus fotos de la noche ✨</p>
+      <script>
+        /* Se desbloquea solo el día del evento (la base además rechaza fotos antes de tiempo) */
+        (function(){
+          var box = document.querySelector('.album-qr');
+          if(!box) return;
+          var p = box.dataset.fecha.split('-');
+          var abre = new Date(+p[0], +p[1] - 1, +p[2], 0, 0, 0);
+          if(new Date() < abre) box.classList.add('bloqueado');
+        })();
+      </script>
     </div>
   </section>
 
