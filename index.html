@@ -1979,7 +1979,8 @@ function initEnvRain(){
 /* El API particiona por `url_boda`; mandar `slug`/`proyecto` hace que el
    UPDATE no encuentre al invitado y devuelva no_match. */
 (function(){
-  var PANEL_API = 'https://panel-invitados-qr.vercel.app/api/confirmar';
+  /* La clienta maneja sus invitaciones en panel-invitados (no en el panel QR) */
+  var PANEL_API = 'https://panel-invitados.vercel.app/api/confirmar';
   var RSVP_URL  = 'https://xv-zoe-galan.vercel.app';
 
   /* Sin fecha limite publicada: el RSVP queda abierto hasta el dia del evento
@@ -2190,6 +2191,8 @@ function initEnvRain(){
     qrSec.style.display = 'block';
   }
   function showQrsPending(){
+    /* El panel de invitados no genera códigos de acceso: la sección no se muestra */
+    hideQrs(); return;
     if(!qrSec || !qrGrid) return;
     qrGrid.innerHTML = '';
     var p = document.createElement('p');
